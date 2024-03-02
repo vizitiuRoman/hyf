@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = ".;proto";
+
+service AuthSVC {
+  rpc Login(LoginIn) returns (AuthOut) {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "auth";
+      summary: "Login into account";
+    };
+    option (google.api.http) = {
+      post: "/v1/auth/login",
+      body: "*"
+    };
+  }
+
+  rpc Register(RegisterIn) returns (AuthOut) {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "auth";
+      summary: "Register new account";
+    };
+    option (google.api.http) = {
+      post: "/v1/auth/register",
+      body: "*"
+    };
+  }
+}
+
+message LoginIn {
+  string email = 1;
+  string password = 2;
+}
+
+message RegisterIn {
+  string nickname = 1;
+  string login = 2;
+  string password = 3;
+  string email = 4;
+  string name = 5;
+  string last_name = 6;
+}
+
+message AuthOut {
+  int64 expires_in = 1;
+  string token = 2;
+}

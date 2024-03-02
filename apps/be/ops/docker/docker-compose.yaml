@@ -1,0 +1,55 @@
+version: '3.8'
+
+volumes:
+  hyf_vol:
+
+services:
+
+  hyf_migrate:
+    restart: on-failure
+    image: migrate/migrate
+    volumes:
+      - ../../migrations:/migrations
+    command: [ "-path", "/migrations", "-database",  "postgres://hyf:hyf@hyf_db:5432/hyf?sslmode=disable", "up" ]
+    depends_on:
+      hyf_db:
+        condition: service_healthy
+
+  hyf_redis:
+    image: redis:6.2.10
+    restart: always
+    ports:
+      - "63791:6379"
+
+  hyf_app:
+    ports:
+      - "8080:8080"
+      - "18080"
+    build:
+      context: ./../../
+      dockerfile: ./ops/docker/Dockerfile
+      target: application
+    volumes:
+      - ./../../:/app:rw
+    environment:
+      ENV_FILE: ./.env
+    depends_on: [ hyf_db, hyf_redis ]
+
+  hyf_db:
+    image: postgres:15.0
+    restart: always
+    volumes:
+      - hyf_vol:/var/lib/postgresql/data
+      - ../../migrations:/migrations
+    environment:
+      POSTGRES_USER: hyf
+      POSTGRES_HOST: localhost
+      POSTGRES_PASSWORD: hyf
+      POSTGRES_DATABASE: hyf
+    ports:
+      - "5001:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-U", "hyf" ]
+      interval: 5s
+      timeout: 1s
+      retries: 2

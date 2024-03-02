@@ -1,0 +1,21 @@
+output   = "hyfdb"
+pkgname  = "hyfdb"
+wipe     = true
+no-tests = false
+add-enum-types = true
+
+[psql]
+  host    = "localhost"
+  port    = 5001
+  dbname  = "hyf"
+  schema  = "public"
+  user    = "hyf"
+  pass    = "hyf"
+  sslmode = "disable"
+  blacklist = ["schema_migrations"]
+
+#[[types]]
+#  [types.match]
+#  type = "int"
+#  [types.replace]
+#  type = "int64"
