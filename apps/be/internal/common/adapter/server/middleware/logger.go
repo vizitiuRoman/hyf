@@ -8,6 +8,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -15,8 +16,13 @@ func LoggerMiddleware(_ context.Context, logger log.Logger) grpc.UnaryServerInte
 	interceptor := grpc.UnaryServerInterceptor(func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		l := logger.With(
 			zap.Any("debug.request.data", req),
-			zap.Any("debug.request.method", info.FullMethod),
+			zap.String("debug.request.method", info.FullMethod),
 		)
+
+		md, ok := metadata.FromIncomingContext(ctx)
+		if ok {
+			l = logger.With(zap.Any("debug.request.metadata", md))
+		}
 
 		start := time.Now()
 

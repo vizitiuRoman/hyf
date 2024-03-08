@@ -26,6 +26,7 @@ create table todo
     id                serial primary key,
     group_id          int references "group" (id),
     creator_user_id   int references "user" (id),
+    title             text                     not null,
     description       text                     not null,
     location          varchar(255),
     urgency_level     varchar(50),

@@ -2,6 +2,8 @@ package repo
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/db"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
@@ -45,13 +47,19 @@ type todoRepo struct {
 }
 
 func (r *todoRepo) Find(ctx context.Context, id int64) (*model.Todo, error) {
-	ent, err := hyfdb.Todos(hyfdb.TodoWhere.ID.EQ(int(id))).One(ctx, r.db)
-	if err != nil {
-		r.logger.WithMethod(ctx, "Find").Error("execute query", zap.Error(err))
-		return nil, err
-	}
+	ent, err := hyfdb.Todos(hyfdb.TodoWhere.ID.EQ(id)).One(ctx, r.db)
+	switch {
+	case errors.Is(err, sql.ErrNoRows):
+		r.logger.WithMethod(ctx, "Find").Error("todo not found", zap.Int64("id", id), zap.Error(err))
+		return nil, domain.ErrNotFound
 
-	return r.todoAdapter.FromEntity(ent), nil
+	case err != nil:
+		r.logger.WithMethod(ctx, "Find").Error("failed to find todo", zap.Int64("id", id), zap.Error(err))
+		return nil, err
+
+	default:
+		return r.todoAdapter.FromEntity(ent), nil
+	}
 }
 
 func (r *todoRepo) FindAll(ctx context.Context) ([]*model.Todo, error) {
@@ -81,7 +89,7 @@ func (r *todoRepo) Update(ctx context.Context, input *model.Todo) (*model.Todo, 
 
 	rowsAff, err := ent.Update(ctx, r.db, boil.Infer())
 	if err != nil {
-		r.logger.WithMethod(ctx, "Update").Error("failed to update saga", zap.Error(err))
+		r.logger.WithMethod(ctx, "Update").Error("failed to update todo", zap.Error(err))
 		return nil, err
 	}
 	if rowsAff != 1 {
@@ -93,13 +101,13 @@ func (r *todoRepo) Update(ctx context.Context, input *model.Todo) (*model.Todo, 
 }
 
 func (r *todoRepo) Delete(ctx context.Context, id int64) error {
-	rowsAff, err := hyfdb.Todos(hyfdb.TodoWhere.ID.EQ(int(id))).DeleteAll(ctx, r.db)
+	rowsAff, err := hyfdb.Todos(hyfdb.TodoWhere.ID.EQ(id)).DeleteAll(ctx, r.db)
 	if err != nil {
-		r.logger.WithMethod(ctx, "Delete").Error("failed to delete app", zap.Error(err))
+		r.logger.WithMethod(ctx, "Delete").Error("failed to delete todo", zap.Error(err))
 		return err
 	}
 	if rowsAff == 0 {
-		r.logger.WithMethod(ctx, "Delete").Error("failed to delete app", zap.Error(domain.ErrNotFound))
+		r.logger.WithMethod(ctx, "Delete").Error("failed to delete todo", zap.Error(domain.ErrNotFound))
 		return domain.ErrNotFound
 	}
 

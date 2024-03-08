@@ -24,7 +24,7 @@ import (
 
 // User is an object representing the database table.
 type User struct {
-	ID           int       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID           int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
 	Username     string    `boil:"username" json:"username" toml:"username" yaml:"username"`
 	PasswordHash string    `boil:"password_hash" json:"password_hash" toml:"password_hash" yaml:"password_hash"`
 	Email        string    `boil:"email" json:"email" toml:"email" yaml:"email"`
@@ -94,14 +94,14 @@ func (w whereHelpernull_Time) IsNull() qm.QueryMod    { return qmhelper.WhereIsN
 func (w whereHelpernull_Time) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 var UserWhere = struct {
-	ID           whereHelperint
+	ID           whereHelperint64
 	Username     whereHelperstring
 	PasswordHash whereHelperstring
 	Email        whereHelperstring
 	CreatedAt    whereHelpernull_Time
 	LastLoginAt  whereHelpernull_Time
 }{
-	ID:           whereHelperint{field: "\"user\".\"id\""},
+	ID:           whereHelperint64{field: "\"user\".\"id\""},
 	Username:     whereHelperstring{field: "\"user\".\"username\""},
 	PasswordHash: whereHelperstring{field: "\"user\".\"password_hash\""},
 	Email:        whereHelperstring{field: "\"user\".\"email\""},
@@ -1485,7 +1485,7 @@ func Users(mods ...qm.QueryMod) userQuery {
 
 // FindUser retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindUser(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*User, error) {
+func FindUser(ctx context.Context, exec boil.ContextExecutor, iD int64, selectCols ...string) (*User, error) {
 	userObj := &User{}
 
 	sel := "*"
@@ -1998,7 +1998,7 @@ func (o *UserSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) er
 }
 
 // UserExists checks if the User row exists.
-func UserExists(ctx context.Context, exec boil.ContextExecutor, iD int) (bool, error) {
+func UserExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"user\" where \"id\"=$1 limit 1)"
 

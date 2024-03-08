@@ -4,7 +4,6 @@ import (
 	"context"
 
 	grpc2 "github.com/vizitiuRoman/hyf/internal/application/grpc"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/db"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/server/grpc"
 	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
@@ -26,9 +25,15 @@ func NewFxGRPC(in FxGrpcIn) []*grpc.ServerDescriptor {
 	return in.Descriptors
 }
 
-func NewFxTodoSVC(ctx context.Context, logger log.Logger, db db.DB, todoAdapterFactory adapter.TodoAdapterFactory, todoService service.TodoService) DescriptorOut {
+func NewFxTodoSVC(ctx context.Context, logger log.Logger, todoAdapterFactory adapter.TodoAdapterFactory, todoService service.TodoService) DescriptorOut {
 	return DescriptorOut{
-		Option: grpc2.NewTodoSVCServerDescriptor(ctx, logger, db, todoAdapterFactory, todoService),
+		Option: grpc2.NewTodoSVCServerDescriptor(ctx, logger, todoAdapterFactory, todoService),
+	}
+}
+
+func NewFxAuthSVC(ctx context.Context, logger log.Logger, authTokenAdapterFactory adapter.AuthTokenAdapterFactory, authService service.AuthService) DescriptorOut {
+	return DescriptorOut{
+		Option: grpc2.NewAuthSVCServerDescriptor(ctx, logger, authTokenAdapterFactory, authService),
 	}
 }
 

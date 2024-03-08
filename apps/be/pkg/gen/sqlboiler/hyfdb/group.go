@@ -24,7 +24,7 @@ import (
 
 // Group is an object representing the database table.
 type Group struct {
-	ID            int       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID            int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
 	GroupName     string    `boil:"group_name" json:"group_name" toml:"group_name" yaml:"group_name"`
 	CreatorUserID null.Int  `boil:"creator_user_id" json:"creator_user_id,omitempty" toml:"creator_user_id" yaml:"creator_user_id,omitempty"`
 	CreatedAt     time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
@@ -59,22 +59,22 @@ var GroupTableColumns = struct {
 
 // Generated where
 
-type whereHelperint struct{ field string }
+type whereHelperint64 struct{ field string }
 
-func (w whereHelperint) EQ(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperint) NEQ(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperint) LT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperint) LTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperint) GT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperint) GTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperint) IN(slice []int) qm.QueryMod {
+func (w whereHelperint64) EQ(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperint64) NEQ(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperint64) LT(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperint64) LTE(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperint64) GT(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperint64) GTE(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+func (w whereHelperint64) IN(slice []int64) qm.QueryMod {
 	values := make([]interface{}, 0, len(slice))
 	for _, value := range slice {
 		values = append(values, value)
 	}
 	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
 }
-func (w whereHelperint) NIN(slice []int) qm.QueryMod {
+func (w whereHelperint64) NIN(slice []int64) qm.QueryMod {
 	values := make([]interface{}, 0, len(slice))
 	for _, value := range slice {
 		values = append(values, value)
@@ -165,12 +165,12 @@ func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
 }
 
 var GroupWhere = struct {
-	ID            whereHelperint
+	ID            whereHelperint64
 	GroupName     whereHelperstring
 	CreatorUserID whereHelpernull_Int
 	CreatedAt     whereHelpertime_Time
 }{
-	ID:            whereHelperint{field: "\"group\".\"id\""},
+	ID:            whereHelperint64{field: "\"group\".\"id\""},
 	GroupName:     whereHelperstring{field: "\"group\".\"group_name\""},
 	CreatorUserID: whereHelpernull_Int{field: "\"group\".\"creator_user_id\""},
 	CreatedAt:     whereHelpertime_Time{field: "\"group\".\"created_at\""},
@@ -1247,7 +1247,7 @@ func Groups(mods ...qm.QueryMod) groupQuery {
 
 // FindGroup retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindGroup(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*Group, error) {
+func FindGroup(ctx context.Context, exec boil.ContextExecutor, iD int64, selectCols ...string) (*Group, error) {
 	groupObj := &Group{}
 
 	sel := "*"
@@ -1760,7 +1760,7 @@ func (o *GroupSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) e
 }
 
 // GroupExists checks if the Group row exists.
-func GroupExists(ctx context.Context, exec boil.ContextExecutor, iD int) (bool, error) {
+func GroupExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"group\" where \"id\"=$1 limit 1)"
 

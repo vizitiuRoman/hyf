@@ -22,6 +22,10 @@ type Config struct {
 	Logger *zap.Config   `yaml:"logger"`
 	DB     *db.Config    `yaml:"db"`
 	Server *grpc.Config  `yaml:"server"`
+
+	Auth *struct {
+		JWTSecretKey string `yaml:"jwt_secret_key"`
+	} `yaml:"auth"`
 }
 
 var cfg *Config

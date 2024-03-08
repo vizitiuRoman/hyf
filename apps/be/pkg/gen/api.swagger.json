@@ -1270,7 +1270,7 @@
           "type": "string",
           "format": "int64"
         },
-        "name": {
+        "title": {
           "type": "string"
         },
         "description": {

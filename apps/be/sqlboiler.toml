@@ -14,8 +14,8 @@ add-enum-types = true
   sslmode = "disable"
   blacklist = ["schema_migrations"]
 
-#[[types]]
-#  [types.match]
-#  type = "int"
-#  [types.replace]
-#  type = "int64"
+[[types]]
+  [types.match]
+  type = "int"
+  [types.replace]
+  type = "int64"

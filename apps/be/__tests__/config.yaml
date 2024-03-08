@@ -1,9 +1,6 @@
 location: ${LOCATION}
 version: v1
 
-auth:
-  jwt_secret_key: porfmewif
-
 logger:
   level: ${LOGGER_LEVEL}
   disableCaller: false

@@ -15,7 +15,6 @@ func NewAuthInterceptor(_ context.Context) grpc.UnaryServerInterceptor {
 
 		token, err := grpc_auth.AuthFromMD(ctx, "bearer")
 		if err != nil {
-			// Unauthenticated error
 			return nil, err
 		}
 

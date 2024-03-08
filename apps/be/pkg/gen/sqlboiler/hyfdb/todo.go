@@ -24,7 +24,7 @@ import (
 
 // Todo is an object representing the database table.
 type Todo struct {
-	ID               int         `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID               int64       `boil:"id" json:"id" toml:"id" yaml:"id"`
 	GroupID          null.Int    `boil:"group_id" json:"group_id,omitempty" toml:"group_id" yaml:"group_id,omitempty"`
 	CreatorUserID    null.Int    `boil:"creator_user_id" json:"creator_user_id,omitempty" toml:"creator_user_id" yaml:"creator_user_id,omitempty"`
 	Description      string      `boil:"description" json:"description" toml:"description" yaml:"description"`
@@ -32,6 +32,7 @@ type Todo struct {
 	UrgencyLevel     null.String `boil:"urgency_level" json:"urgency_level,omitempty" toml:"urgency_level" yaml:"urgency_level,omitempty"`
 	CreatedAt        time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	CompletionStatus null.Bool   `boil:"completion_status" json:"completion_status,omitempty" toml:"completion_status" yaml:"completion_status,omitempty"`
+	Title            string      `boil:"title" json:"title" toml:"title" yaml:"title"`
 
 	R *todoR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L todoL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -46,6 +47,7 @@ var TodoColumns = struct {
 	UrgencyLevel     string
 	CreatedAt        string
 	CompletionStatus string
+	Title            string
 }{
 	ID:               "id",
 	GroupID:          "group_id",
@@ -55,6 +57,7 @@ var TodoColumns = struct {
 	UrgencyLevel:     "urgency_level",
 	CreatedAt:        "created_at",
 	CompletionStatus: "completion_status",
+	Title:            "title",
 }
 
 var TodoTableColumns = struct {
@@ -66,6 +69,7 @@ var TodoTableColumns = struct {
 	UrgencyLevel     string
 	CreatedAt        string
 	CompletionStatus string
+	Title            string
 }{
 	ID:               "todo.id",
 	GroupID:          "todo.group_id",
@@ -75,6 +79,7 @@ var TodoTableColumns = struct {
 	UrgencyLevel:     "todo.urgency_level",
 	CreatedAt:        "todo.created_at",
 	CompletionStatus: "todo.completion_status",
+	Title:            "todo.title",
 }
 
 // Generated where
@@ -142,7 +147,7 @@ func (w whereHelpernull_Bool) IsNull() qm.QueryMod    { return qmhelper.WhereIsN
 func (w whereHelpernull_Bool) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 var TodoWhere = struct {
-	ID               whereHelperint
+	ID               whereHelperint64
 	GroupID          whereHelpernull_Int
 	CreatorUserID    whereHelpernull_Int
 	Description      whereHelperstring
@@ -150,8 +155,9 @@ var TodoWhere = struct {
 	UrgencyLevel     whereHelpernull_String
 	CreatedAt        whereHelpertime_Time
 	CompletionStatus whereHelpernull_Bool
+	Title            whereHelperstring
 }{
-	ID:               whereHelperint{field: "\"todo\".\"id\""},
+	ID:               whereHelperint64{field: "\"todo\".\"id\""},
 	GroupID:          whereHelpernull_Int{field: "\"todo\".\"group_id\""},
 	CreatorUserID:    whereHelpernull_Int{field: "\"todo\".\"creator_user_id\""},
 	Description:      whereHelperstring{field: "\"todo\".\"description\""},
@@ -159,6 +165,7 @@ var TodoWhere = struct {
 	UrgencyLevel:     whereHelpernull_String{field: "\"todo\".\"urgency_level\""},
 	CreatedAt:        whereHelpertime_Time{field: "\"todo\".\"created_at\""},
 	CompletionStatus: whereHelpernull_Bool{field: "\"todo\".\"completion_status\""},
+	Title:            whereHelperstring{field: "\"todo\".\"title\""},
 }
 
 // TodoRels is where relationship names are stored.
@@ -209,8 +216,8 @@ func (r *todoR) GetRatings() RatingSlice {
 type todoL struct{}
 
 var (
-	todoAllColumns            = []string{"id", "group_id", "creator_user_id", "description", "location", "urgency_level", "created_at", "completion_status"}
-	todoColumnsWithoutDefault = []string{"description", "created_at"}
+	todoAllColumns            = []string{"id", "group_id", "creator_user_id", "description", "location", "urgency_level", "created_at", "completion_status", "title"}
+	todoColumnsWithoutDefault = []string{"description", "created_at", "title"}
 	todoColumnsWithDefault    = []string{"id", "group_id", "creator_user_id", "location", "urgency_level", "completion_status"}
 	todoPrimaryKeyColumns     = []string{"id"}
 	todoGeneratedColumns      = []string{}
@@ -1192,7 +1199,7 @@ func Todos(mods ...qm.QueryMod) todoQuery {
 
 // FindTodo retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindTodo(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*Todo, error) {
+func FindTodo(ctx context.Context, exec boil.ContextExecutor, iD int64, selectCols ...string) (*Todo, error) {
 	todoObj := &Todo{}
 
 	sel := "*"
@@ -1705,7 +1712,7 @@ func (o *TodoSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) er
 }
 
 // TodoExists checks if the Todo row exists.
-func TodoExists(ctx context.Context, exec boil.ContextExecutor, iD int) (bool, error) {
+func TodoExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"todo\" where \"id\"=$1 limit 1)"
 

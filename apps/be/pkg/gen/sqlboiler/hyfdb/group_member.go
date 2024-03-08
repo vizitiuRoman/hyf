@@ -24,7 +24,7 @@ import (
 
 // GroupMember is an object representing the database table.
 type GroupMember struct {
-	ID           int       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID           int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
 	GroupID      null.Int  `boil:"group_id" json:"group_id,omitempty" toml:"group_id" yaml:"group_id,omitempty"`
 	MemberUserID null.Int  `boil:"member_user_id" json:"member_user_id,omitempty" toml:"member_user_id" yaml:"member_user_id,omitempty"`
 	JoinedAt     time.Time `boil:"joined_at" json:"joined_at" toml:"joined_at" yaml:"joined_at"`
@@ -60,12 +60,12 @@ var GroupMemberTableColumns = struct {
 // Generated where
 
 var GroupMemberWhere = struct {
-	ID           whereHelperint
+	ID           whereHelperint64
 	GroupID      whereHelpernull_Int
 	MemberUserID whereHelpernull_Int
 	JoinedAt     whereHelpertime_Time
 }{
-	ID:           whereHelperint{field: "\"group_member\".\"id\""},
+	ID:           whereHelperint64{field: "\"group_member\".\"id\""},
 	GroupID:      whereHelpernull_Int{field: "\"group_member\".\"group_id\""},
 	MemberUserID: whereHelpernull_Int{field: "\"group_member\".\"member_user_id\""},
 	JoinedAt:     whereHelpertime_Time{field: "\"group_member\".\"joined_at\""},
@@ -837,7 +837,7 @@ func GroupMembers(mods ...qm.QueryMod) groupMemberQuery {
 
 // FindGroupMember retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindGroupMember(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*GroupMember, error) {
+func FindGroupMember(ctx context.Context, exec boil.ContextExecutor, iD int64, selectCols ...string) (*GroupMember, error) {
 	groupMemberObj := &GroupMember{}
 
 	sel := "*"
@@ -1336,7 +1336,7 @@ func (o *GroupMemberSlice) ReloadAll(ctx context.Context, exec boil.ContextExecu
 }
 
 // GroupMemberExists checks if the GroupMember row exists.
-func GroupMemberExists(ctx context.Context, exec boil.ContextExecutor, iD int) (bool, error) {
+func GroupMemberExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"group_member\" where \"id\"=$1 limit 1)"
 

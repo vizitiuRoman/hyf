@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/db"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/server/grpc"
 	"github.com/vizitiuRoman/hyf/internal/domain"
@@ -20,7 +19,6 @@ type todoSVC struct {
 	pb.UnimplementedTodoSVCServer
 	ctx    context.Context
 	logger log.Logger
-	db     db.DB
 
 	todoAdapterFactory adapter.TodoAdapterFactory
 
@@ -30,21 +28,18 @@ type todoSVC struct {
 func NewTodoSVCServerDescriptor(
 	ctx context.Context,
 	logger log.Logger,
-	db db.DB,
 
 	todoAdapterFactory adapter.TodoAdapterFactory,
 
 	todoService service.TodoService,
 ) *grpc.ServerDescriptor {
 	server := &todoSVC{
-		ctx: ctx,
-		db:  db,
+		ctx:    ctx,
+		logger: logger,
 
 		todoAdapterFactory: todoAdapterFactory,
 
 		todoService: todoService,
-
-		logger: logger,
 	}
 
 	return &grpc.ServerDescriptor{
@@ -88,9 +83,6 @@ func (s *todoSVC) UpdateTodo(ctx context.Context, input *pb.UpdateTodoIn) (*pb.U
 	switch {
 	case errors.Is(err, domain.ErrNotFound):
 		return nil, status.Error(codes.NotFound, err.Error())
-
-	case errors.Is(err, domain.ErrAlreadyExists):
-		return nil, status.Error(codes.AlreadyExists, err.Error())
 
 	case err != nil:
 		return nil, err

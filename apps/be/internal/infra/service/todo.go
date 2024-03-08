@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/cache/redis"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/db"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
 	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
@@ -20,7 +19,6 @@ type todoService struct {
 
 	todoAdapterFactory adapter.TodoAdapterFactory
 	todoRepoFactory    repo.TodoRepoFactory
-	c                  redis.Cache
 }
 
 func NewTodoService(
@@ -30,18 +28,14 @@ func NewTodoService(
 
 	todoAdapterFactory adapter.TodoAdapterFactory,
 	todoRepoFactory repo.TodoRepoFactory,
-
-	c redis.Cache,
 ) service.TodoService {
 	return &todoService{
+		logger: logger.WithComponent(ctx, "todo_service"),
+
 		db: db,
 
 		todoAdapterFactory: todoAdapterFactory,
 		todoRepoFactory:    todoRepoFactory,
-
-		logger: logger.WithComponent(ctx, "todo_service"),
-
-		c: c,
 	}
 }
 
@@ -50,7 +44,7 @@ func (s *todoService) Find(ctx context.Context, id int64) (*model.Todo, error) {
 
 	todo, err := todoRepo.Find(ctx, id)
 	if err != nil {
-		return nil, fmt.Errorf("cannot create todo: %w", err)
+		return nil, fmt.Errorf("cannot find todo: %w", err)
 	}
 
 	return todo, nil

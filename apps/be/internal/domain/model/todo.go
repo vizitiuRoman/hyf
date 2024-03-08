@@ -2,6 +2,6 @@ package model
 
 type Todo struct {
 	ID          int64
-	Name        string
+	Title       string
 	Description string
 }

@@ -24,10 +24,10 @@ import (
 
 // Rating is an object representing the database table.
 type Rating struct {
-	ID          int       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID          int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
 	TodoID      null.Int  `boil:"todo_id" json:"todo_id,omitempty" toml:"todo_id" yaml:"todo_id,omitempty"`
 	RatedUserID null.Int  `boil:"rated_user_id" json:"rated_user_id,omitempty" toml:"rated_user_id" yaml:"rated_user_id,omitempty"`
-	RatingValue int       `boil:"rating_value" json:"rating_value" toml:"rating_value" yaml:"rating_value"`
+	RatingValue int64     `boil:"rating_value" json:"rating_value" toml:"rating_value" yaml:"rating_value"`
 	CreatedAt   time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 
 	R *ratingR `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -65,16 +65,16 @@ var RatingTableColumns = struct {
 // Generated where
 
 var RatingWhere = struct {
-	ID          whereHelperint
+	ID          whereHelperint64
 	TodoID      whereHelpernull_Int
 	RatedUserID whereHelpernull_Int
-	RatingValue whereHelperint
+	RatingValue whereHelperint64
 	CreatedAt   whereHelpertime_Time
 }{
-	ID:          whereHelperint{field: "\"rating\".\"id\""},
+	ID:          whereHelperint64{field: "\"rating\".\"id\""},
 	TodoID:      whereHelpernull_Int{field: "\"rating\".\"todo_id\""},
 	RatedUserID: whereHelpernull_Int{field: "\"rating\".\"rated_user_id\""},
-	RatingValue: whereHelperint{field: "\"rating\".\"rating_value\""},
+	RatingValue: whereHelperint64{field: "\"rating\".\"rating_value\""},
 	CreatedAt:   whereHelpertime_Time{field: "\"rating\".\"created_at\""},
 }
 
@@ -844,7 +844,7 @@ func Ratings(mods ...qm.QueryMod) ratingQuery {
 
 // FindRating retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindRating(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*Rating, error) {
+func FindRating(ctx context.Context, exec boil.ContextExecutor, iD int64, selectCols ...string) (*Rating, error) {
 	ratingObj := &Rating{}
 
 	sel := "*"
@@ -1357,7 +1357,7 @@ func (o *RatingSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) 
 }
 
 // RatingExists checks if the Rating row exists.
-func RatingExists(ctx context.Context, exec boil.ContextExecutor, iD int) (bool, error) {
+func RatingExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"rating\" where \"id\"=$1 limit 1)"
 
