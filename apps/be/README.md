@@ -11,7 +11,11 @@ LOGGER_LEVEL_ENCODER=lower
 ####################################################
 ##################### DATABASE #####################
 # LOCAL
-DB_DSN=postgres://todo:todo@todo_db:5432/todo?sslmode=disable
+DB_DSN=postgres://hyf:hyf@hyf_db:5432/hyf?sslmode=disable
+####################################################
+##################### CACHE #####################
+REDIS_SENTINEL_ADDRESSES=hyf_redis:6379
+REDIS_PASSWORD=hyf
 ```
 
 ## Run application
