@@ -11,7 +11,7 @@ option go_package = ".;proto";
 service TodoSVC {
   rpc GetTodos(GetTodosIn) returns (GetTodosOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "todos";
+      tags: "TodoSVC";
       summary: "Return the todos";
       description: "Return the todos";
     };
@@ -20,7 +20,7 @@ service TodoSVC {
 
   rpc GetTodo(GetTodoIn) returns (GetTodoOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "todos";
+      tags: "TodoSVC";
       summary: "Returns a todo";
       description: "Returns a todo by id.";
     };
@@ -29,7 +29,7 @@ service TodoSVC {
 
   rpc CreateTodo(CreateTodoIn) returns (CreateTodoOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "todos";
+      tags: "TodoSVC";
       summary: "Create a new todo";
       description: "Create a new todo. Returns created todo.";
     };
@@ -41,7 +41,7 @@ service TodoSVC {
 
   rpc UpdateTodo(UpdateTodoIn) returns (UpdateTodoOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "todos";
+      tags: "TodoSVC";
       summary: "Update the todo";
       description: "Update the todo. Returns an updated todo.";
     };
@@ -53,7 +53,7 @@ service TodoSVC {
 
   rpc DeleteTodo(DeleteTodoIn) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "todos";
+      tags: "TodoSVC";
       summary: "Delete the todo";
       description: "Delete the todo.";
     };

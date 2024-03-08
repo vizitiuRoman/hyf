@@ -11,7 +11,7 @@ option go_package = ".;proto";
 service GroupSVC {
   rpc GetGroups(GetGroupsIn) returns (GetGroupsOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "groups";
+      tags: "GroupSVC";
       summary: "Return the groups";
       description: "Return the groups";
     };
@@ -20,7 +20,7 @@ service GroupSVC {
 
   rpc GetGroup(GetGroupIn) returns (GetGroupOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "groups";
+      tags: "GroupSVC";
       summary: "Returns a group";
       description: "Returns a group by id.";
     };
@@ -29,7 +29,7 @@ service GroupSVC {
 
   rpc CreateGroup(CreateGroupIn) returns (CreateGroupOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "groups";
+      tags: "GroupSVC";
       summary: "Create a new group";
       description: "Create a new group. Returns created group.";
     };
@@ -41,7 +41,7 @@ service GroupSVC {
 
   rpc UpdateGroup(UpdateGroupIn) returns (UpdateGroupOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "groups";
+      tags: "GroupSVC";
       summary: "Update the group";
       description: "Update the group. Returns an updated group.";
     };
@@ -53,7 +53,7 @@ service GroupSVC {
 
   rpc DeleteGroup(DeleteGroupIn) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "groups";
+      tags: "GroupSVC";
       summary: "Delete the group";
       description: "Delete the group.";
     };

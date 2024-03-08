@@ -11,7 +11,7 @@ option go_package = ".;proto";
 service UserSVC {
   rpc GetUsers(GetUsersIn) returns (GetUsersOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "users";
+      tags: "UserSVC";
       summary: "Return the users";
       description: "Return the users";
     };
@@ -20,7 +20,7 @@ service UserSVC {
 
   rpc GetUser(GetUserIn) returns (GetUserOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "users";
+      tags: "UserSVC";
       summary: "Returns a user";
       description: "Returns a user by id.";
     };
@@ -29,7 +29,7 @@ service UserSVC {
 
   rpc UpdateUser(UpdateUserIn) returns (UpdateUserOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "users";
+      tags: "UserSVC";
       summary: "Update the user";
       description: "Update the user. Returns an updated user.";
     };
@@ -41,7 +41,7 @@ service UserSVC {
 
   rpc DeleteUser(DeleteUserIn) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "users";
+      tags: "UserSVC";
       summary: "Delete the user";
       description: "Delete the user.";
     };

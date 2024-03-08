@@ -80,7 +80,7 @@
           }
         ],
         "tags": [
-          "auth"
+          "AuthSVC"
         ]
       }
     },
@@ -131,7 +131,7 @@
           }
         ],
         "tags": [
-          "auth"
+          "AuthSVC"
         ]
       }
     },
@@ -173,7 +173,7 @@
           }
         },
         "tags": [
-          "groups"
+          "GroupSVC"
         ]
       },
       "post": {
@@ -223,7 +223,7 @@
           }
         ],
         "tags": [
-          "groups"
+          "GroupSVC"
         ]
       },
       "put": {
@@ -273,7 +273,7 @@
           }
         ],
         "tags": [
-          "groups"
+          "GroupSVC"
         ]
       }
     },
@@ -324,7 +324,7 @@
           }
         ],
         "tags": [
-          "groups"
+          "GroupSVC"
         ]
       },
       "delete": {
@@ -374,7 +374,7 @@
           }
         ],
         "tags": [
-          "groups"
+          "GroupSVC"
         ]
       }
     },
@@ -416,7 +416,7 @@
           }
         },
         "tags": [
-          "ratings"
+          "RatingSVC"
         ]
       },
       "post": {
@@ -466,7 +466,7 @@
           }
         ],
         "tags": [
-          "ratings"
+          "RatingSVC"
         ]
       },
       "put": {
@@ -516,7 +516,7 @@
           }
         ],
         "tags": [
-          "ratings"
+          "RatingSVC"
         ]
       }
     },
@@ -567,7 +567,7 @@
           }
         ],
         "tags": [
-          "ratings"
+          "RatingSVC"
         ]
       },
       "delete": {
@@ -617,7 +617,7 @@
           }
         ],
         "tags": [
-          "ratings"
+          "RatingSVC"
         ]
       }
     },
@@ -659,7 +659,7 @@
           }
         },
         "tags": [
-          "todos"
+          "TodoSVC"
         ]
       },
       "post": {
@@ -709,7 +709,7 @@
           }
         ],
         "tags": [
-          "todos"
+          "TodoSVC"
         ]
       },
       "put": {
@@ -759,7 +759,7 @@
           }
         ],
         "tags": [
-          "todos"
+          "TodoSVC"
         ]
       }
     },
@@ -810,7 +810,7 @@
           }
         ],
         "tags": [
-          "todos"
+          "TodoSVC"
         ]
       },
       "delete": {
@@ -860,7 +860,7 @@
           }
         ],
         "tags": [
-          "todos"
+          "TodoSVC"
         ]
       }
     },
@@ -902,7 +902,7 @@
           }
         },
         "tags": [
-          "users"
+          "UserSVC"
         ]
       },
       "put": {
@@ -952,7 +952,7 @@
           }
         ],
         "tags": [
-          "users"
+          "UserSVC"
         ]
       }
     },
@@ -1003,7 +1003,7 @@
           }
         ],
         "tags": [
-          "users"
+          "UserSVC"
         ]
       },
       "delete": {
@@ -1053,7 +1053,7 @@
           }
         ],
         "tags": [
-          "users"
+          "UserSVC"
         ]
       }
     }

@@ -11,7 +11,7 @@ option go_package = ".;proto";
 service AuthSVC {
   rpc Login(LoginIn) returns (AuthOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "auth";
+      tags: "AuthSVC";
       summary: "Login into account";
     };
     option (google.api.http) = {
@@ -22,7 +22,7 @@ service AuthSVC {
 
   rpc Register(RegisterIn) returns (AuthOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "auth";
+      tags: "AuthSVC";
       summary: "Register new account";
     };
     option (google.api.http) = {

@@ -11,7 +11,7 @@ option go_package = ".;proto";
 service RatingSVC {
   rpc GetRatings(GetRatingsIn) returns (GetRatingsOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "ratings";
+      tags: "RatingSVC";
       summary: "Return the ratings";
       description: "Return the ratings";
     };
@@ -20,7 +20,7 @@ service RatingSVC {
 
   rpc GetRating(GetRatingIn) returns (GetRatingOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "ratings";
+      tags: "RatingSVC";
       summary: "Returns a rating";
       description: "Returns a rating by id.";
     };
@@ -29,7 +29,7 @@ service RatingSVC {
 
   rpc CreateRating(CreateRatingIn) returns (CreateRatingOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "ratings";
+      tags: "RatingSVC";
       summary: "Create a new rating";
       description: "Create a new rating. Returns created rating.";
     };
@@ -41,7 +41,7 @@ service RatingSVC {
 
   rpc UpdateRating(UpdateRatingIn) returns (UpdateRatingOut) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "ratings";
+      tags: "RatingSVC";
       summary: "Update the rating";
       description: "Update the rating. Returns an updated rating.";
     };
@@ -53,7 +53,7 @@ service RatingSVC {
 
   rpc DeleteRating(DeleteRatingIn) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: "ratings";
+      tags: "RatingSVC";
       summary: "Delete the rating";
       description: "Delete the rating.";
     };
