@@ -16,5 +16,5 @@ type AuthTokenRepo interface {
 	Create(context.Context, *model.AuthToken) error
 	Update(context.Context, *model.AuthToken) error
 	Delete(context.Context, uuid.UUID) error
-	GetByID(context.Context, uuid.UUID) (*model.AuthToken, error)
+	GetByUUID(context.Context, uuid.UUID) (*model.AuthToken, error)
 }

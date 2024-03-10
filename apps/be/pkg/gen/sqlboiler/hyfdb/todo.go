@@ -27,12 +27,12 @@ type Todo struct {
 	ID               int64       `boil:"id" json:"id" toml:"id" yaml:"id"`
 	GroupID          null.Int    `boil:"group_id" json:"group_id,omitempty" toml:"group_id" yaml:"group_id,omitempty"`
 	CreatorUserID    null.Int    `boil:"creator_user_id" json:"creator_user_id,omitempty" toml:"creator_user_id" yaml:"creator_user_id,omitempty"`
+	Title            string      `boil:"title" json:"title" toml:"title" yaml:"title"`
 	Description      string      `boil:"description" json:"description" toml:"description" yaml:"description"`
 	Location         null.String `boil:"location" json:"location,omitempty" toml:"location" yaml:"location,omitempty"`
 	UrgencyLevel     null.String `boil:"urgency_level" json:"urgency_level,omitempty" toml:"urgency_level" yaml:"urgency_level,omitempty"`
 	CreatedAt        time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	CompletionStatus null.Bool   `boil:"completion_status" json:"completion_status,omitempty" toml:"completion_status" yaml:"completion_status,omitempty"`
-	Title            string      `boil:"title" json:"title" toml:"title" yaml:"title"`
 
 	R *todoR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L todoL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -42,44 +42,44 @@ var TodoColumns = struct {
 	ID               string
 	GroupID          string
 	CreatorUserID    string
+	Title            string
 	Description      string
 	Location         string
 	UrgencyLevel     string
 	CreatedAt        string
 	CompletionStatus string
-	Title            string
 }{
 	ID:               "id",
 	GroupID:          "group_id",
 	CreatorUserID:    "creator_user_id",
+	Title:            "title",
 	Description:      "description",
 	Location:         "location",
 	UrgencyLevel:     "urgency_level",
 	CreatedAt:        "created_at",
 	CompletionStatus: "completion_status",
-	Title:            "title",
 }
 
 var TodoTableColumns = struct {
 	ID               string
 	GroupID          string
 	CreatorUserID    string
+	Title            string
 	Description      string
 	Location         string
 	UrgencyLevel     string
 	CreatedAt        string
 	CompletionStatus string
-	Title            string
 }{
 	ID:               "todo.id",
 	GroupID:          "todo.group_id",
 	CreatorUserID:    "todo.creator_user_id",
+	Title:            "todo.title",
 	Description:      "todo.description",
 	Location:         "todo.location",
 	UrgencyLevel:     "todo.urgency_level",
 	CreatedAt:        "todo.created_at",
 	CompletionStatus: "todo.completion_status",
-	Title:            "todo.title",
 }
 
 // Generated where
@@ -150,22 +150,22 @@ var TodoWhere = struct {
 	ID               whereHelperint64
 	GroupID          whereHelpernull_Int
 	CreatorUserID    whereHelpernull_Int
+	Title            whereHelperstring
 	Description      whereHelperstring
 	Location         whereHelpernull_String
 	UrgencyLevel     whereHelpernull_String
 	CreatedAt        whereHelpertime_Time
 	CompletionStatus whereHelpernull_Bool
-	Title            whereHelperstring
 }{
 	ID:               whereHelperint64{field: "\"todo\".\"id\""},
 	GroupID:          whereHelpernull_Int{field: "\"todo\".\"group_id\""},
 	CreatorUserID:    whereHelpernull_Int{field: "\"todo\".\"creator_user_id\""},
+	Title:            whereHelperstring{field: "\"todo\".\"title\""},
 	Description:      whereHelperstring{field: "\"todo\".\"description\""},
 	Location:         whereHelpernull_String{field: "\"todo\".\"location\""},
 	UrgencyLevel:     whereHelpernull_String{field: "\"todo\".\"urgency_level\""},
 	CreatedAt:        whereHelpertime_Time{field: "\"todo\".\"created_at\""},
 	CompletionStatus: whereHelpernull_Bool{field: "\"todo\".\"completion_status\""},
-	Title:            whereHelperstring{field: "\"todo\".\"title\""},
 }
 
 // TodoRels is where relationship names are stored.
@@ -216,8 +216,8 @@ func (r *todoR) GetRatings() RatingSlice {
 type todoL struct{}
 
 var (
-	todoAllColumns            = []string{"id", "group_id", "creator_user_id", "description", "location", "urgency_level", "created_at", "completion_status", "title"}
-	todoColumnsWithoutDefault = []string{"description", "created_at", "title"}
+	todoAllColumns            = []string{"id", "group_id", "creator_user_id", "title", "description", "location", "urgency_level", "created_at", "completion_status"}
+	todoColumnsWithoutDefault = []string{"title", "description", "created_at"}
 	todoColumnsWithDefault    = []string{"id", "group_id", "creator_user_id", "location", "urgency_level", "completion_status"}
 	todoPrimaryKeyColumns     = []string{"id"}
 	todoGeneratedColumns      = []string{}

@@ -72,14 +72,14 @@ func (r *authTokenRepo) Delete(ctx context.Context, u uuid.UUID) error {
 	return r.rdb.Del(ctx, keys...)
 }
 
-func (r *authTokenRepo) GetByID(ctx context.Context, u uuid.UUID) (*model.AuthToken, error) {
+func (r *authTokenRepo) GetByUUID(ctx context.Context, u uuid.UUID) (*model.AuthToken, error) {
 	str, err := r.rdb.Get(ctx, r.keyID(u))
 	if err != nil {
 		return nil, err
 	}
 
 	if str == nil {
-		r.logger.WithMethod(ctx, "GetByID").Error("auth token not found", zap.String("uuid", u.String()), zap.Error(domain.ErrNotFound))
+		r.logger.WithMethod(ctx, "GetByUUID").Error("auth token not found", zap.String("uuid", u.String()), zap.Error(domain.ErrNotFound))
 		return nil, domain.ErrNotFound
 	}
 

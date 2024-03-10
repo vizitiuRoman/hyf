@@ -24,47 +24,52 @@ import (
 
 // User is an object representing the database table.
 type User struct {
-	ID           int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Username     string    `boil:"username" json:"username" toml:"username" yaml:"username"`
-	PasswordHash string    `boil:"password_hash" json:"password_hash" toml:"password_hash" yaml:"password_hash"`
-	Email        string    `boil:"email" json:"email" toml:"email" yaml:"email"`
-	CreatedAt    null.Time `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
-	LastLoginAt  null.Time `boil:"last_login_at" json:"last_login_at,omitempty" toml:"last_login_at" yaml:"last_login_at,omitempty"`
+	ID          int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Name        string    `boil:"name" json:"name" toml:"name" yaml:"name"`
+	LastName    string    `boil:"last_name" json:"last_name" toml:"last_name" yaml:"last_name"`
+	Email       string    `boil:"email" json:"email" toml:"email" yaml:"email"`
+	Password    string    `boil:"password" json:"password" toml:"password" yaml:"password"`
+	CreatedAt   time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	LastLoginAt null.Time `boil:"last_login_at" json:"last_login_at,omitempty" toml:"last_login_at" yaml:"last_login_at,omitempty"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var UserColumns = struct {
-	ID           string
-	Username     string
-	PasswordHash string
-	Email        string
-	CreatedAt    string
-	LastLoginAt  string
+	ID          string
+	Name        string
+	LastName    string
+	Email       string
+	Password    string
+	CreatedAt   string
+	LastLoginAt string
 }{
-	ID:           "id",
-	Username:     "username",
-	PasswordHash: "password_hash",
-	Email:        "email",
-	CreatedAt:    "created_at",
-	LastLoginAt:  "last_login_at",
+	ID:          "id",
+	Name:        "name",
+	LastName:    "last_name",
+	Email:       "email",
+	Password:    "password",
+	CreatedAt:   "created_at",
+	LastLoginAt: "last_login_at",
 }
 
 var UserTableColumns = struct {
-	ID           string
-	Username     string
-	PasswordHash string
-	Email        string
-	CreatedAt    string
-	LastLoginAt  string
+	ID          string
+	Name        string
+	LastName    string
+	Email       string
+	Password    string
+	CreatedAt   string
+	LastLoginAt string
 }{
-	ID:           "user.id",
-	Username:     "user.username",
-	PasswordHash: "user.password_hash",
-	Email:        "user.email",
-	CreatedAt:    "user.created_at",
-	LastLoginAt:  "user.last_login_at",
+	ID:          "user.id",
+	Name:        "user.name",
+	LastName:    "user.last_name",
+	Email:       "user.email",
+	Password:    "user.password",
+	CreatedAt:   "user.created_at",
+	LastLoginAt: "user.last_login_at",
 }
 
 // Generated where
@@ -94,19 +99,21 @@ func (w whereHelpernull_Time) IsNull() qm.QueryMod    { return qmhelper.WhereIsN
 func (w whereHelpernull_Time) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 var UserWhere = struct {
-	ID           whereHelperint64
-	Username     whereHelperstring
-	PasswordHash whereHelperstring
-	Email        whereHelperstring
-	CreatedAt    whereHelpernull_Time
-	LastLoginAt  whereHelpernull_Time
+	ID          whereHelperint64
+	Name        whereHelperstring
+	LastName    whereHelperstring
+	Email       whereHelperstring
+	Password    whereHelperstring
+	CreatedAt   whereHelpertime_Time
+	LastLoginAt whereHelpernull_Time
 }{
-	ID:           whereHelperint64{field: "\"user\".\"id\""},
-	Username:     whereHelperstring{field: "\"user\".\"username\""},
-	PasswordHash: whereHelperstring{field: "\"user\".\"password_hash\""},
-	Email:        whereHelperstring{field: "\"user\".\"email\""},
-	CreatedAt:    whereHelpernull_Time{field: "\"user\".\"created_at\""},
-	LastLoginAt:  whereHelpernull_Time{field: "\"user\".\"last_login_at\""},
+	ID:          whereHelperint64{field: "\"user\".\"id\""},
+	Name:        whereHelperstring{field: "\"user\".\"name\""},
+	LastName:    whereHelperstring{field: "\"user\".\"last_name\""},
+	Email:       whereHelperstring{field: "\"user\".\"email\""},
+	Password:    whereHelperstring{field: "\"user\".\"password\""},
+	CreatedAt:   whereHelpertime_Time{field: "\"user\".\"created_at\""},
+	LastLoginAt: whereHelpernull_Time{field: "\"user\".\"last_login_at\""},
 }
 
 // UserRels is where relationship names are stored.
@@ -167,9 +174,9 @@ func (r *userR) GetCreatorUserTodos() TodoSlice {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "username", "password_hash", "email", "created_at", "last_login_at"}
-	userColumnsWithoutDefault = []string{"username", "password_hash", "email"}
-	userColumnsWithDefault    = []string{"id", "created_at", "last_login_at"}
+	userAllColumns            = []string{"id", "name", "last_name", "email", "password", "created_at", "last_login_at"}
+	userColumnsWithoutDefault = []string{"name", "last_name", "email", "password", "created_at"}
+	userColumnsWithDefault    = []string{"id", "last_login_at"}
 	userPrimaryKeyColumns     = []string{"id"}
 	userGeneratedColumns      = []string{}
 )
@@ -1524,8 +1531,8 @@ func (o *User) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 	if !boil.TimestampsAreSkipped(ctx) {
 		currTime := time.Now().In(boil.GetLocation())
 
-		if queries.MustTime(o.CreatedAt).IsZero() {
-			queries.SetScanner(&o.CreatedAt, currTime)
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
 		}
 	}
 
@@ -1736,8 +1743,8 @@ func (o *User) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCo
 	if !boil.TimestampsAreSkipped(ctx) {
 		currTime := time.Now().In(boil.GetLocation())
 
-		if queries.MustTime(o.CreatedAt).IsZero() {
-			queries.SetScanner(&o.CreatedAt, currTime)
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
 		}
 	}
 

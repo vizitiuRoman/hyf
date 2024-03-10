@@ -52,7 +52,9 @@ service UserSVC {
 message User {
   int64 id = 1;
   string name = 2;
-  string description = 3;
+  string last_name = 3;
+  string email = 4;
+  string password = 5;
 }
 
 // ----------------- GetUsers -----------------

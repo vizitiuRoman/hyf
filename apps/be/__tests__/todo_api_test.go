@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/suite"
 	"github.com/vizitiuRoman/hyf/__tests__/helper"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/config"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
 	"github.com/vizitiuRoman/hyf/internal/domain/model"
 	hyfv1 "github.com/vizitiuRoman/hyf/pkg/adapter/hyf/v1"
@@ -29,7 +28,7 @@ type TodoAPISuite struct {
 
 	todoSVCClient pb.TodoSVCClient
 
-	Cfg    *config.Config
+	Cfg    *helper.Config
 	Logger log.Logger
 
 	// suite
@@ -39,10 +38,26 @@ type TodoAPISuite struct {
 }
 
 func (s *TodoAPISuite) SetupSuite() {
-	s.bearer = "omg"
-
 	var err error
 	s.ctx, s.cancel = context.WithCancel(context.Background())
+
+	authSVCClient, err := hyfv1.NewAuthSVCClient(
+		s.ctx,
+		s.Logger,
+		&hyfv1.Config{
+			Host:     s.Cfg.Grpc.Host,
+			GrpcPort: s.Cfg.Grpc.Port,
+		},
+		[]grpc.DialOption{}, nil,
+	)
+
+	out, err := authSVCClient.Login(s.ctx, &pb.LoginIn{
+		Email:    s.Cfg.User.Email,
+		Password: s.Cfg.User.Password,
+	})
+	s.Nil(err)
+
+	s.bearer = out.Token
 
 	md := metadata.New(map[string]string{"authorization": "Bearer " + s.bearer})
 	s.ctx = metadata.NewOutgoingContext(s.ctx, md)
@@ -51,8 +66,8 @@ func (s *TodoAPISuite) SetupSuite() {
 		s.ctx,
 		s.Logger,
 		&hyfv1.Config{
-			Host:     "localhost",
-			GrpcPort: 32772,
+			Host:     s.Cfg.Grpc.Host,
+			GrpcPort: s.Cfg.Grpc.Port,
 		},
 		[]grpc.DialOption{}, nil,
 	)

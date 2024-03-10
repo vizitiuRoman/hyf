@@ -1243,16 +1243,10 @@
     "RegisterIn": {
       "type": "object",
       "properties": {
-        "nickname": {
-          "type": "string"
-        },
-        "login": {
+        "email": {
           "type": "string"
         },
         "password": {
-          "type": "string"
-        },
-        "email": {
           "type": "string"
         },
         "name": {
@@ -1352,7 +1346,13 @@
         "name": {
           "type": "string"
         },
-        "description": {
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
           "type": "string"
         }
       }

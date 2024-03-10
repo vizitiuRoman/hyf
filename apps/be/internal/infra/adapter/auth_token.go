@@ -3,7 +3,6 @@ package adapter
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -80,10 +79,13 @@ func (a *authTokenAdapter) ToProto(token *model.AuthToken) *pb.AuthOut {
 	}
 }
 
-func (a *authTokenAdapter) FromLoginProtoAndUserID(in *pb.LoginIn, userID int64) (*model.AuthToken, error) {
+func (a *authTokenAdapter) FromUserID(ctx context.Context, userID int64) (*model.AuthToken, error) {
+	logger := a.logger.WithMethod(ctx, "FromUserID")
+
 	u, err := uuid.NewV4()
 	if err != nil {
-		return nil, fmt.Errorf("failed to create new uuidv4")
+		logger.Error("failed to create new uuidv4", zap.Error(err))
+		return nil, err
 	}
 
 	expiresIn := time.Now().Add(time.Hour * 3).Unix()
@@ -95,15 +97,25 @@ func (a *authTokenAdapter) FromLoginProtoAndUserID(in *pb.LoginIn, userID int64)
 			"expiresIn": expiresIn,
 		})
 
-	t, err := token.SignedString("@TODO")
+	t, err := token.SignedString([]byte("@TODO"))
 	if err != nil {
+		logger.Error("failed to sign jwt", zap.Error(err))
 		return nil, err
 	}
 
 	return &model.AuthToken{
-		UUID:      uuid.UUID{},
+		UUID:      u,
 		Token:     t,
 		UserID:    userID,
 		ExpiresIn: expiresIn,
 	}, nil
+}
+
+func (a *authTokenAdapter) FromRegisterProtoToUser(in *pb.RegisterIn) *model.User {
+	return &model.User{
+		Email:    in.Email,
+		Password: in.Password,
+		Name:     in.Name,
+		LastName: in.LastName,
+	}
 }

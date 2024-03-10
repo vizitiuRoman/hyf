@@ -12,10 +12,13 @@ var Constructors = fx.Provide(
 	cache.NewAuthTokenRepoFactory,
 
 	repo.NewTodoRepoFactory,
+	repo.NewUserRepoFactory,
 
 	adapter.NewAuthTokenAdapterFactory,
 	adapter.NewTodoAdapterFactory,
+	adapter.NewUserAdapterFactory,
 
 	service.NewAuthService,
 	service.NewTodoService,
+	service.NewUserService,
 )

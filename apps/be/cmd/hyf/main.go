@@ -29,7 +29,7 @@ func main() {
 		fx.Provide(func(cfg *config.Config) *grpc.Config { return cfg.Server }),
 
 		fx.Provide(application.NewFxTodoSVC),
-		//fx.Provide(application.NewFxTodoSVC),
+		fx.Provide(application.NewFxAuthSVC),
 
 		fx.Provide(application.NewFxGRPC),
 
