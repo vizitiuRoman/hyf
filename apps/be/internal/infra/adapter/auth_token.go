@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/config"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
+	"github.com/vizitiuRoman/hyf/internal/domain"
 	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
 	"github.com/vizitiuRoman/hyf/internal/domain/model"
 	pb "github.com/vizitiuRoman/hyf/pkg/gen/hyf/v1"
@@ -32,14 +33,16 @@ func (f *authTokenAdapterFactory) Create(ctx context.Context) adapter.AuthTokenA
 	return &authTokenAdapter{
 		logger: f.logger.WithComponent(ctx, "AuthTokenAdapter"),
 
-		jwtSecretKey: f.cfg.Auth.JWTSecretKey,
+		accessSecretKey:  f.cfg.Auth.AccessTokenSecretKey,
+		refreshSecretKey: f.cfg.Auth.RefreshTokenSecretKey,
 	}
 }
 
 type authTokenAdapter struct {
 	logger log.Logger
 
-	jwtSecretKey string
+	accessSecretKey  string
+	refreshSecretKey string
 }
 
 func (a *authTokenAdapter) MarshalJSON(ctx context.Context, token *model.AuthToken) (*string, error) {
@@ -72,20 +75,22 @@ func (a *authTokenAdapter) UnmarshalJSON(ctx context.Context, token *string) (*m
 	return &res, nil
 }
 
-func (a *authTokenAdapter) ToProto(token *model.AuthToken) *pb.AuthOut {
+func (a *authTokenAdapter) ToProto(accessToken, refreshToken *model.AuthToken) *pb.AuthOut {
 	return &pb.AuthOut{
-		ExpiresIn: token.ExpiresIn,
-		Token:     token.Token,
+		ExpiresIn:    accessToken.ExpiresIn,
+		Token:        accessToken.Token,
+		RefreshToken: refreshToken.Token,
 	}
 }
 
-func (a *authTokenAdapter) FromUserID(ctx context.Context, userID int64) (*model.AuthToken, error) {
-	logger := a.logger.WithMethod(ctx, "FromUserID")
+func (a *authTokenAdapter) FromUserID(ctx context.Context, userID int64) (*model.AuthToken, *model.AuthToken, error) {
+	logger := a.logger.WithMethod(ctx, "AccessTokenFromUserID")
 
+	// ACCESS TOKEN
 	u, err := uuid.NewV4()
 	if err != nil {
 		logger.Error("failed to create new uuidv4", zap.Error(err))
-		return nil, err
+		return nil, nil, err
 	}
 
 	expiresIn := time.Now().Add(time.Hour * 3).Unix()
@@ -97,18 +102,79 @@ func (a *authTokenAdapter) FromUserID(ctx context.Context, userID int64) (*model
 			"expiresIn": expiresIn,
 		})
 
-	t, err := token.SignedString([]byte("@TODO"))
+	t, err := token.SignedString([]byte(a.accessSecretKey))
 	if err != nil {
 		logger.Error("failed to sign jwt", zap.Error(err))
-		return nil, err
+		return nil, nil, err
 	}
-
-	return &model.AuthToken{
+	accessToken := model.AuthToken{
 		UUID:      u,
 		Token:     t,
 		UserID:    userID,
 		ExpiresIn: expiresIn,
-	}, nil
+	}
+
+	// REFRESH TOKEN
+	u, err = uuid.NewV4()
+	if err != nil {
+		logger.Error("failed to create new uuidv4", zap.Error(err))
+		return nil, nil, err
+	}
+
+	expiresIn = time.Now().Add(time.Hour * 24).Unix()
+
+	token = jwt.NewWithClaims(jwt.SigningMethodHS256,
+		jwt.MapClaims{
+			"uuid":      u.String(),
+			"user_id":   userID,
+			"expiresIn": expiresIn,
+		})
+
+	t, err = token.SignedString([]byte(a.refreshSecretKey))
+	if err != nil {
+		logger.Error("failed to sign jwt", zap.Error(err))
+		return nil, nil, err
+	}
+	refreshToken := model.AuthToken{
+		UUID:      u,
+		Token:     t,
+		UserID:    userID,
+		ExpiresIn: expiresIn,
+	}
+
+	return &accessToken, &refreshToken, nil
+}
+
+func (a *authTokenAdapter) ClaimsFromJWT(ctx context.Context, token string) (string, int64, error) {
+	t, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		return []byte(a.accessSecretKey), nil
+	})
+	if err != nil {
+		return "", 0, domain.ErrUnauthorized
+	}
+
+	claims, ok := t.Claims.(jwt.MapClaims)
+	if !ok || !t.Valid {
+		return "", 0, domain.ErrUnauthorized
+	}
+
+	return claims["uuid"].(string), int64(claims["user_id"].(float64)), nil
+}
+
+func (a *authTokenAdapter) ClaimsFromRefreshJWT(ctx context.Context, token string) (string, int64, error) {
+	t, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		return []byte(a.refreshSecretKey), nil
+	})
+	if err != nil {
+		return "", 0, domain.ErrUnauthorized
+	}
+
+	claims, ok := t.Claims.(jwt.MapClaims)
+	if !ok || !t.Valid {
+		return "", 0, domain.ErrUnauthorized
+	}
+
+	return claims["uuid"].(string), int64(claims["user_id"].(float64)), nil
 }
 
 func (a *authTokenAdapter) FromRegisterProtoToUser(in *pb.RegisterIn) *model.User {

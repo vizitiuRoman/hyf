@@ -5,4 +5,5 @@ import "errors"
 var (
 	ErrNotFound      = errors.New("model was not found")
 	ErrAlreadyExists = errors.New("model already exists")
+	ErrUnauthorized  = errors.New("unauthorized")
 )

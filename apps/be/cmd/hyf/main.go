@@ -33,13 +33,13 @@ func main() {
 
 		fx.Provide(application.NewFxGRPC),
 
-		fx.Invoke(newGigServer),
+		fx.Invoke(newServer),
 	)
 
 	app.Run()
 }
 
-func newGigServer(
+func newServer(
 	lf fx.Lifecycle,
 	server grpc.Server,
 	serverDescriptors []*grpc.ServerDescriptor,

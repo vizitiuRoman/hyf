@@ -24,7 +24,8 @@ type Config struct {
 	Server *grpc.Config  `yaml:"server"`
 
 	Auth *struct {
-		JWTSecretKey string `yaml:"jwt_secret_key"`
+		AccessTokenSecretKey  string `yaml:"access_token_secret_key"`
+		RefreshTokenSecretKey string `yaml:"refresh_token_secret_key"`
 	} `yaml:"auth"`
 }
 

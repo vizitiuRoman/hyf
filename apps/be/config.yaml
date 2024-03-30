@@ -2,7 +2,8 @@ location: ${LOCATION}
 version: v1
 
 auth:
-  jwt_secret_key: porfmewif
+  access_token_secret_key: porfmewif
+  refresh_token_secret_key: qwexqewxeqxwxqw
 
 logger:
   level: ${LOGGER_LEVEL}

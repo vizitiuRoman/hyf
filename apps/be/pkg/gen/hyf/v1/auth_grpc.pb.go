@@ -21,6 +21,8 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	AuthSVC_Login_FullMethodName    = "/AuthSVC/Login"
 	AuthSVC_Register_FullMethodName = "/AuthSVC/Register"
+	AuthSVC_Refresh_FullMethodName  = "/AuthSVC/Refresh"
+	AuthSVC_Logout_FullMethodName   = "/AuthSVC/Logout"
 )
 
 // AuthSVCClient is the client API for AuthSVC service.
@@ -29,6 +31,8 @@ const (
 type AuthSVCClient interface {
 	Login(ctx context.Context, in *LoginIn, opts ...grpc.CallOption) (*AuthOut, error)
 	Register(ctx context.Context, in *RegisterIn, opts ...grpc.CallOption) (*AuthOut, error)
+	Refresh(ctx context.Context, in *RefreshIn, opts ...grpc.CallOption) (*AuthOut, error)
+	Logout(ctx context.Context, in *LogoutIn, opts ...grpc.CallOption) (*LogoutOut, error)
 }
 
 type authSVCClient struct {
@@ -57,12 +61,32 @@ func (c *authSVCClient) Register(ctx context.Context, in *RegisterIn, opts ...gr
 	return out, nil
 }
 
+func (c *authSVCClient) Refresh(ctx context.Context, in *RefreshIn, opts ...grpc.CallOption) (*AuthOut, error) {
+	out := new(AuthOut)
+	err := c.cc.Invoke(ctx, AuthSVC_Refresh_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authSVCClient) Logout(ctx context.Context, in *LogoutIn, opts ...grpc.CallOption) (*LogoutOut, error) {
+	out := new(LogoutOut)
+	err := c.cc.Invoke(ctx, AuthSVC_Logout_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthSVCServer is the server API for AuthSVC service.
 // All implementations must embed UnimplementedAuthSVCServer
 // for forward compatibility
 type AuthSVCServer interface {
 	Login(context.Context, *LoginIn) (*AuthOut, error)
 	Register(context.Context, *RegisterIn) (*AuthOut, error)
+	Refresh(context.Context, *RefreshIn) (*AuthOut, error)
+	Logout(context.Context, *LogoutIn) (*LogoutOut, error)
 	mustEmbedUnimplementedAuthSVCServer()
 }
 
@@ -75,6 +99,12 @@ func (UnimplementedAuthSVCServer) Login(context.Context, *LoginIn) (*AuthOut, er
 }
 func (UnimplementedAuthSVCServer) Register(context.Context, *RegisterIn) (*AuthOut, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedAuthSVCServer) Refresh(context.Context, *RefreshIn) (*AuthOut, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Refresh not implemented")
+}
+func (UnimplementedAuthSVCServer) Logout(context.Context, *LogoutIn) (*LogoutOut, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedAuthSVCServer) mustEmbedUnimplementedAuthSVCServer() {}
 
@@ -125,6 +155,42 @@ func _AuthSVC_Register_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthSVC_Refresh_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshIn)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthSVCServer).Refresh(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthSVC_Refresh_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthSVCServer).Refresh(ctx, req.(*RefreshIn))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthSVC_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutIn)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthSVCServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthSVC_Logout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthSVCServer).Logout(ctx, req.(*LogoutIn))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthSVC_ServiceDesc is the grpc.ServiceDesc for AuthSVC service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +205,14 @@ var AuthSVC_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Register",
 			Handler:    _AuthSVC_Register_Handler,
+		},
+		{
+			MethodName: "Refresh",
+			Handler:    _AuthSVC_Refresh_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _AuthSVC_Logout_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

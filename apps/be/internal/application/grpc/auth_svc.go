@@ -48,6 +48,9 @@ func NewAuthSVCServerDescriptor(
 			{
 				Method: (*authSVC).Register,
 			},
+			{
+				Method: (*authSVC).Refresh,
+			},
 		},
 	}
 }
@@ -55,21 +58,41 @@ func NewAuthSVCServerDescriptor(
 func (s *authSVC) Login(ctx context.Context, input *pb.LoginIn) (*pb.AuthOut, error) {
 	authAdapter := s.authAdapterFactory.Create(ctx)
 
-	out, err := s.authService.Login(ctx, input)
+	accessToken, refreshToken, err := s.authService.Login(ctx, input)
 	if err != nil {
 		return nil, err
 	}
 
-	return authAdapter.ToProto(out), nil
+	return authAdapter.ToProto(accessToken, refreshToken), nil
 }
 
 func (s *authSVC) Register(ctx context.Context, input *pb.RegisterIn) (*pb.AuthOut, error) {
 	authAdapter := s.authAdapterFactory.Create(ctx)
 
-	out, err := s.authService.Register(ctx, input)
+	accessToken, refreshToken, err := s.authService.Register(ctx, input)
 	if err != nil {
 		return nil, err
 	}
 
-	return authAdapter.ToProto(out), nil
+	return authAdapter.ToProto(accessToken, refreshToken), nil
+}
+
+func (s *authSVC) Refresh(ctx context.Context, input *pb.RefreshIn) (*pb.AuthOut, error) {
+	authAdapter := s.authAdapterFactory.Create(ctx)
+
+	accessToken, refreshToken, err := s.authService.Refresh(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return authAdapter.ToProto(accessToken, refreshToken), nil
+}
+
+func (s *authSVC) Logout(ctx context.Context, input *pb.LogoutIn) (*pb.LogoutOut, error) {
+	err := s.authService.Logout(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.LogoutOut{}, nil
 }

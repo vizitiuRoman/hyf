@@ -8,6 +8,8 @@ import (
 )
 
 type AuthService interface {
-	Login(context.Context, *pb.LoginIn) (*model.AuthToken, error)
-	Register(context.Context, *pb.RegisterIn) (*model.AuthToken, error)
+	Login(context.Context, *pb.LoginIn) (accessToken, refreshToken *model.AuthToken, err error)
+	Register(context.Context, *pb.RegisterIn) (accessToken, refreshToken *model.AuthToken, err error)
+	Refresh(context.Context, *pb.RefreshIn) (accessToken, refreshToken *model.AuthToken, err error)
+	Logout(context.Context, *pb.LogoutIn) (err error)
 }

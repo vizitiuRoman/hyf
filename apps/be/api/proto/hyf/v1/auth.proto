@@ -30,6 +30,28 @@ service AuthSVC {
       body: "*"
     };
   }
+
+  rpc Refresh(RefreshIn) returns (AuthOut) {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "AuthSVC";
+      summary: "Refresh the access token";
+    };
+    option (google.api.http) = {
+      post: "/v1/auth/refresh",
+      body: "*"
+    };
+  }
+
+  rpc Logout(LogoutIn) returns (LogoutOut) {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "AuthSVC";
+      summary: "Logout";
+    };
+    option (google.api.http) = {
+      post: "/v1/auth/logout",
+      body: "*"
+    };
+  }
 }
 
 message LoginIn {
@@ -44,7 +66,20 @@ message RegisterIn {
   string last_name = 4;
 }
 
+message RefreshIn {
+  string refresh_token = 1;
+}
+
+message LogoutIn {
+  string token = 1;
+  string refresh_token = 2;
+}
+
+message LogoutOut {
+}
+
 message AuthOut {
   int64 expires_in = 1;
   string token = 2;
+  string refresh_token = 3;
 }

@@ -42,3 +42,11 @@ tasks:
       - buf mod update
     generates:
       - "pkg/gen/hyf"
+
+  run-tests:
+    desc: run tests ( firstly authorize ).
+    cmds:
+      - go clean -testcache && go test -v ./__tests__/auth_api_test.go
+      - go clean -testcache && go test -v ./__tests__/todo_api_test.go
+    generates:
+      - "pkg/gen/hyf"
