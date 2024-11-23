@@ -8,44 +8,30 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/config"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
 	"github.com/vizitiuRoman/hyf/internal/domain"
-	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
 	"github.com/vizitiuRoman/hyf/internal/domain/model"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 	pb "github.com/vizitiuRoman/hyf/pkg/gen/hyf/v1"
 	"go.uber.org/zap"
 )
 
-type authTokenAdapterFactory struct {
-	logger log.Logger
-
-	cfg *config.Config
-}
-
-func NewAuthTokenAdapterFactory(logger log.Logger, cfg *config.Config) adapter.AuthTokenAdapterFactory {
-	return &authTokenAdapterFactory{
-		logger: logger,
-		cfg:    cfg,
-	}
-}
-
-func (f *authTokenAdapterFactory) Create(ctx context.Context) adapter.AuthTokenAdapter {
-	return &authTokenAdapter{
-		logger: f.logger.WithComponent(ctx, "AuthTokenAdapter"),
-
-		accessSecretKey:  f.cfg.Auth.AccessTokenSecretKey,
-		refreshSecretKey: f.cfg.Auth.RefreshTokenSecretKey,
-	}
-}
-
-type authTokenAdapter struct {
-	logger log.Logger
+type AuthTokenAdapter struct {
+	logger logger.Logger
 
 	accessSecretKey  string
 	refreshSecretKey string
 }
 
-func (a *authTokenAdapter) MarshalJSON(ctx context.Context, token *model.AuthToken) (*string, error) {
+func NewAuthTokenAdapter(ctx context.Context, logger logger.Logger, cfg *config.Config) *AuthTokenAdapter {
+	return &AuthTokenAdapter{
+		logger: logger.WithComponent(ctx, "AuthTokenAdapter"),
+
+		accessSecretKey:  cfg.Auth.AccessTokenSecretKey,
+		refreshSecretKey: cfg.Auth.RefreshTokenSecretKey,
+	}
+}
+
+func (a *AuthTokenAdapter) MarshalJSON(ctx context.Context, token *model.AuthToken) (*string, error) {
 	if token == nil {
 		return nil, nil
 	}
@@ -60,7 +46,7 @@ func (a *authTokenAdapter) MarshalJSON(ctx context.Context, token *model.AuthTok
 	return &res, nil
 }
 
-func (a *authTokenAdapter) UnmarshalJSON(ctx context.Context, token *string) (*model.AuthToken, error) {
+func (a *AuthTokenAdapter) UnmarshalJSON(ctx context.Context, token *string) (*model.AuthToken, error) {
 	if token == nil || *token == "" {
 		return nil, nil
 	}
@@ -75,7 +61,7 @@ func (a *authTokenAdapter) UnmarshalJSON(ctx context.Context, token *string) (*m
 	return &res, nil
 }
 
-func (a *authTokenAdapter) ToProto(accessToken, refreshToken *model.AuthToken) *pb.AuthOut {
+func (a *AuthTokenAdapter) ToProto(accessToken, refreshToken *model.AuthToken) *pb.AuthOut {
 	return &pb.AuthOut{
 		ExpiresIn:    accessToken.ExpiresIn,
 		Token:        accessToken.Token,
@@ -83,7 +69,7 @@ func (a *authTokenAdapter) ToProto(accessToken, refreshToken *model.AuthToken) *
 	}
 }
 
-func (a *authTokenAdapter) FromUserID(ctx context.Context, userID int64) (*model.AuthToken, *model.AuthToken, error) {
+func (a *AuthTokenAdapter) FromUserID(ctx context.Context, userID int64) (*model.AuthToken, *model.AuthToken, error) {
 	logger := a.logger.WithMethod(ctx, "AccessTokenFromUserID")
 
 	// ACCESS TOKEN
@@ -145,7 +131,7 @@ func (a *authTokenAdapter) FromUserID(ctx context.Context, userID int64) (*model
 	return &accessToken, &refreshToken, nil
 }
 
-func (a *authTokenAdapter) ClaimsFromJWT(ctx context.Context, token string) (string, int64, error) {
+func (a *AuthTokenAdapter) ClaimsFromJWT(ctx context.Context, token string) (string, int64, error) {
 	t, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		return []byte(a.accessSecretKey), nil
 	})
@@ -161,7 +147,7 @@ func (a *authTokenAdapter) ClaimsFromJWT(ctx context.Context, token string) (str
 	return claims["uuid"].(string), int64(claims["user_id"].(float64)), nil
 }
 
-func (a *authTokenAdapter) ClaimsFromRefreshJWT(ctx context.Context, token string) (string, int64, error) {
+func (a *AuthTokenAdapter) ClaimsFromRefreshJWT(ctx context.Context, token string) (string, int64, error) {
 	t, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		return []byte(a.refreshSecretKey), nil
 	})
@@ -177,7 +163,7 @@ func (a *authTokenAdapter) ClaimsFromRefreshJWT(ctx context.Context, token strin
 	return claims["uuid"].(string), int64(claims["user_id"].(float64)), nil
 }
 
-func (a *authTokenAdapter) FromRegisterProtoToUser(in *pb.RegisterIn) *model.User {
+func (a *AuthTokenAdapter) FromRegisterProtoToUser(in *pb.RegisterIn) *model.User {
 	return &model.User{
 		Email:    in.Email,
 		Password: in.Password,

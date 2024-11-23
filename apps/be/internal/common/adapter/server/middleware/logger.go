@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func LoggerMiddleware(_ context.Context, logger log.Logger) grpc.UnaryServerInterceptor {
+func LoggerMiddleware(_ context.Context, logger logger.Logger) grpc.UnaryServerInterceptor {
 	interceptor := grpc.UnaryServerInterceptor(func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		l := logger.With(
 			zap.Any("debug.request.data", req),

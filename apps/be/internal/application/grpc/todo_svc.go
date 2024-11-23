@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/server/grpc"
 	"github.com/vizitiuRoman/hyf/internal/domain"
-	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
-	"github.com/vizitiuRoman/hyf/internal/domain/service"
+	"github.com/vizitiuRoman/hyf/internal/infra/adapter"
+	"github.com/vizitiuRoman/hyf/internal/infra/service"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 	pb "github.com/vizitiuRoman/hyf/pkg/gen/hyf/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -18,18 +18,18 @@ import (
 type todoSVC struct {
 	pb.UnimplementedTodoSVCServer
 	ctx    context.Context
-	logger log.Logger
+	logger logger.Logger
 
-	todoAdapterFactory adapter.TodoAdapterFactory
+	adapter *adapter.TodoAdapter
 
 	todoService service.TodoService
 }
 
 func NewTodoSVCServerDescriptor(
 	ctx context.Context,
-	logger log.Logger,
+	logger logger.Logger,
 
-	todoAdapterFactory adapter.TodoAdapterFactory,
+	adapter *adapter.TodoAdapter,
 
 	todoService service.TodoService,
 ) *grpc.ServerDescriptor {
@@ -37,7 +37,7 @@ func NewTodoSVCServerDescriptor(
 		ctx:    ctx,
 		logger: logger,
 
-		todoAdapterFactory: todoAdapterFactory,
+		adapter: adapter,
 
 		todoService: todoService,
 	}
@@ -67,14 +67,12 @@ func NewTodoSVCServerDescriptor(
 }
 
 func (s *todoSVC) CreateTodo(ctx context.Context, input *pb.CreateTodoIn) (*pb.CreateTodoOut, error) {
-	todoAdapter := s.todoAdapterFactory.Create(ctx)
-
 	todo, err := s.todoService.Create(ctx, input)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.CreateTodoOut{Todo: todoAdapter.ToProto(todo)}, nil
+	return &pb.CreateTodoOut{Todo: s.adapter.ToProto(todo)}, nil
 }
 
 func (s *todoSVC) UpdateTodo(ctx context.Context, input *pb.UpdateTodoIn) (*pb.UpdateTodoOut, error) {
@@ -88,9 +86,7 @@ func (s *todoSVC) UpdateTodo(ctx context.Context, input *pb.UpdateTodoIn) (*pb.U
 		return nil, err
 
 	default:
-		todoAdapter := s.todoAdapterFactory.Create(ctx)
-
-		return &pb.UpdateTodoOut{Todo: todoAdapter.ToProto(todo)}, nil
+		return &pb.UpdateTodoOut{Todo: s.adapter.ToProto(todo)}, nil
 	}
 }
 
@@ -120,19 +116,15 @@ func (s *todoSVC) GetTodo(ctx context.Context, input *pb.GetTodoIn) (*pb.GetTodo
 		return nil, err
 
 	default:
-		todoAdapter := s.todoAdapterFactory.Create(ctx)
-
-		return &pb.GetTodoOut{Todo: todoAdapter.ToProto(todo)}, nil
+		return &pb.GetTodoOut{Todo: s.adapter.ToProto(todo)}, nil
 	}
 }
 
 func (s *todoSVC) GetTodos(ctx context.Context, _ *pb.GetTodosIn) (*pb.GetTodosOut, error) {
-	todoAdapter := s.todoAdapterFactory.Create(ctx)
-
 	todos, err := s.todoService.FindAll(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.GetTodosOut{Todos: todoAdapter.ToProtos(todos)}, nil
+	return &pb.GetTodosOut{Todos: s.adapter.ToProtos(todos)}, nil
 }

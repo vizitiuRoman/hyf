@@ -5,53 +5,52 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/cache/redis"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
 	"github.com/vizitiuRoman/hyf/internal/domain"
-	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
 	"github.com/vizitiuRoman/hyf/internal/domain/model"
-	"github.com/vizitiuRoman/hyf/internal/domain/repo"
+	"github.com/vizitiuRoman/hyf/internal/infra/adapter"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 	"go.uber.org/zap"
 )
 
-type authTokenRepoFactory struct {
-	logger log.Logger
+type AuthTokenRepoFactory struct {
+	logger logger.Logger
 
-	authTokenAdapterFactory adapter.AuthTokenAdapterFactory
+	adapter *adapter.AuthTokenAdapter
 }
 
-func NewAuthTokenRepoFactory(logger log.Logger, authTokenAdapterFactory adapter.AuthTokenAdapterFactory) repo.AuthTokenRepoFactory {
-	return &authTokenRepoFactory{
-		logger:                  logger,
-		authTokenAdapterFactory: authTokenAdapterFactory,
+func NewAuthTokenRepoFactory(logger logger.Logger, adapter *adapter.AuthTokenAdapter) *AuthTokenRepoFactory {
+	return &AuthTokenRepoFactory{
+		logger:  logger,
+		adapter: adapter,
 	}
 }
 
-func (f *authTokenRepoFactory) Create(ctx context.Context, rdb redis.Cache) repo.AuthTokenRepo {
-	return &authTokenRepo{
+func (f *AuthTokenRepoFactory) Create(ctx context.Context, rdb redis.Cache) *AuthTokenRepo {
+	return &AuthTokenRepo{
 		logger: f.logger.WithComponent(ctx, "AuthTokenRepo"),
 		rdb:    rdb,
 
-		authTokenAdapterFactory: f.authTokenAdapterFactory,
+		adapter: f.adapter,
 	}
 }
 
-type authTokenRepo struct {
-	logger log.Logger
+type AuthTokenRepo struct {
+	logger logger.Logger
 	rdb    redis.Cache
 
-	authTokenAdapterFactory adapter.AuthTokenAdapterFactory
+	adapter *adapter.AuthTokenAdapter
 }
 
-func (r *authTokenRepo) keyID(u uuid.UUID) string {
+func (r *AuthTokenRepo) keyID(u uuid.UUID) string {
 	return "auth/token/{id:" + u.String() + "}/"
 }
 
-func (r *authTokenRepo) patternID(u uuid.UUID) string {
+func (r *AuthTokenRepo) patternID(u uuid.UUID) string {
 	return "auth/token/*{id:" + u.String() + "}/*"
 }
 
-func (r *authTokenRepo) Create(ctx context.Context, token *model.AuthToken) error {
-	authTokenString, err := r.authTokenAdapterFactory.Create(ctx).MarshalJSON(ctx, token)
+func (r *AuthTokenRepo) Create(ctx context.Context, token *model.AuthToken) error {
+	authTokenString, err := r.adapter.MarshalJSON(ctx, token)
 	if err != nil {
 		return err
 	}
@@ -59,11 +58,11 @@ func (r *authTokenRepo) Create(ctx context.Context, token *model.AuthToken) erro
 	return r.rdb.Set(ctx, r.keyID(token.UUID), authTokenString)
 }
 
-func (r *authTokenRepo) Update(ctx context.Context, token *model.AuthToken) error {
+func (r *AuthTokenRepo) Update(ctx context.Context, token *model.AuthToken) error {
 	return r.Create(ctx, token)
 }
 
-func (r *authTokenRepo) Delete(ctx context.Context, u uuid.UUID) error {
+func (r *AuthTokenRepo) Delete(ctx context.Context, u uuid.UUID) error {
 	keys, err := r.rdb.KeysByPattern(ctx, r.patternID(u))
 	if err != nil {
 		return err
@@ -72,7 +71,7 @@ func (r *authTokenRepo) Delete(ctx context.Context, u uuid.UUID) error {
 	return r.rdb.Del(ctx, keys...)
 }
 
-func (r *authTokenRepo) GetByUUID(ctx context.Context, u uuid.UUID) (*model.AuthToken, error) {
+func (r *AuthTokenRepo) GetByUUID(ctx context.Context, u uuid.UUID) (*model.AuthToken, error) {
 	str, err := r.rdb.Get(ctx, r.keyID(u))
 	if err != nil {
 		return nil, err
@@ -83,5 +82,5 @@ func (r *authTokenRepo) GetByUUID(ctx context.Context, u uuid.UUID) (*model.Auth
 		return nil, domain.ErrNotFound
 	}
 
-	return r.authTokenAdapterFactory.Create(ctx).UnmarshalJSON(ctx, str)
+	return r.adapter.UnmarshalJSON(ctx, str)
 }

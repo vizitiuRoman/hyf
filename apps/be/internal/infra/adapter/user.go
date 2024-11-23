@@ -5,36 +5,25 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
-	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
 	"github.com/vizitiuRoman/hyf/internal/domain/model"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 	pb "github.com/vizitiuRoman/hyf/pkg/gen/hyf/v1"
 	"github.com/vizitiuRoman/hyf/pkg/gen/sqlboiler/hyfdb"
 	"github.com/volatiletech/null/v8"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type userAdapterFactory struct {
-	logger log.Logger
+type UserAdapter struct {
+	logger logger.Logger
 }
 
-func NewUserAdapterFactory(logger log.Logger) adapter.UserAdapterFactory {
-	return &userAdapterFactory{
-		logger: logger,
+func NewUserAdapter(ctx context.Context, logger logger.Logger) *UserAdapter {
+	return &UserAdapter{
+		logger: logger.WithComponent(ctx, "UserAdapter"),
 	}
 }
 
-func (f *userAdapterFactory) Create(ctx context.Context) adapter.UserAdapter {
-	return &userAdapter{
-		logger: f.logger.WithComponent(ctx, "UserAdapter"),
-	}
-}
-
-type userAdapter struct {
-	logger log.Logger
-}
-
-func (a *userAdapter) FromProto(user *pb.User) *model.User {
+func (a *UserAdapter) FromProto(user *pb.User) *model.User {
 	return &model.User{
 		ID:       user.Id,
 		Email:    user.Name,
@@ -44,7 +33,7 @@ func (a *userAdapter) FromProto(user *pb.User) *model.User {
 	}
 }
 
-func (a *userAdapter) ToProto(user *model.User) *pb.User {
+func (a *UserAdapter) ToProto(user *model.User) *pb.User {
 	return &pb.User{
 		Id:       user.ID,
 		Name:     user.Name,
@@ -53,7 +42,7 @@ func (a *userAdapter) ToProto(user *model.User) *pb.User {
 	}
 }
 
-func (a *userAdapter) ToProtos(users []*model.User) []*pb.User {
+func (a *UserAdapter) ToProtos(users []*model.User) []*pb.User {
 	output := make([]*pb.User, 0, len(users))
 
 	for _, user := range users {
@@ -63,7 +52,7 @@ func (a *userAdapter) ToProtos(users []*model.User) []*pb.User {
 	return output
 }
 
-func (a *userAdapter) ToEntity(user *model.User) (*hyfdb.User, error) {
+func (a *UserAdapter) ToEntity(user *model.User) (*hyfdb.User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, fmt.Errorf("cannot generate password hash: %w", err)
@@ -80,7 +69,7 @@ func (a *userAdapter) ToEntity(user *model.User) (*hyfdb.User, error) {
 	}, nil
 }
 
-func (a *userAdapter) ToEntities(users []*model.User) (hyfdb.UserSlice, error) {
+func (a *UserAdapter) ToEntities(users []*model.User) (hyfdb.UserSlice, error) {
 	entities := make(hyfdb.UserSlice, 0, len(users))
 
 	for _, user := range users {
@@ -95,7 +84,7 @@ func (a *userAdapter) ToEntities(users []*model.User) (hyfdb.UserSlice, error) {
 	return entities, nil
 }
 
-func (a *userAdapter) FromEntity(user *hyfdb.User) *model.User {
+func (a *UserAdapter) FromEntity(user *hyfdb.User) *model.User {
 	return &model.User{
 		ID:       user.ID,
 		Email:    user.Email,
@@ -105,7 +94,7 @@ func (a *userAdapter) FromEntity(user *hyfdb.User) *model.User {
 	}
 }
 
-func (a *userAdapter) FromEntities(users hyfdb.UserSlice) []*model.User {
+func (a *UserAdapter) FromEntities(users hyfdb.UserSlice) []*model.User {
 	usersModel := make([]*model.User, 0, len(users))
 
 	for _, user := range users {

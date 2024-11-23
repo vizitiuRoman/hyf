@@ -4,42 +4,41 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/db"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
-	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
 	"github.com/vizitiuRoman/hyf/internal/domain/model"
-	"github.com/vizitiuRoman/hyf/internal/domain/repo"
-	"github.com/vizitiuRoman/hyf/internal/domain/service"
+	"github.com/vizitiuRoman/hyf/internal/infra/adapter"
+	"github.com/vizitiuRoman/hyf/internal/infra/repo"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/pgclient"
 	pb "github.com/vizitiuRoman/hyf/pkg/gen/hyf/v1"
 )
 
-type userService struct {
-	logger log.Logger
-	db     db.DB
+type UserService struct {
+	logger logger.Logger
+	db     pgclient.DB
 
-	userAdapterFactory adapter.UserAdapterFactory
-	userRepoFactory    repo.UserRepoFactory
+	adapter         *adapter.UserAdapter
+	userRepoFactory repo.UserRepoFactory
 }
 
 func NewUserService(
 	ctx context.Context,
-	logger log.Logger,
-	db db.DB,
+	logger logger.Logger,
+	db pgclient.DB,
 
-	userAdapterFactory adapter.UserAdapterFactory,
+	adapter *adapter.UserAdapter,
 	userRepoFactory repo.UserRepoFactory,
-) service.UserService {
-	return &userService{
+) *UserService {
+	return &UserService{
 		logger: logger.WithComponent(ctx, "user_service"),
 
 		db: db,
 
-		userAdapterFactory: userAdapterFactory,
-		userRepoFactory:    userRepoFactory,
+		adapter:         adapter,
+		userRepoFactory: userRepoFactory,
 	}
 }
 
-func (s *userService) Find(ctx context.Context, id int64) (*model.User, error) {
+func (s *UserService) Find(ctx context.Context, id int64) (*model.User, error) {
 	userRepo := s.userRepoFactory.Create(ctx, s.db)
 
 	user, err := userRepo.Find(ctx, id)
@@ -50,7 +49,7 @@ func (s *userService) Find(ctx context.Context, id int64) (*model.User, error) {
 	return user, nil
 }
 
-func (s *userService) FindAll(ctx context.Context) ([]*model.User, error) {
+func (s *UserService) FindAll(ctx context.Context) ([]*model.User, error) {
 	userRepo := s.userRepoFactory.Create(ctx, s.db)
 
 	users, err := userRepo.FindAll(ctx)
@@ -61,11 +60,10 @@ func (s *userService) FindAll(ctx context.Context) ([]*model.User, error) {
 	return users, nil
 }
 
-func (s *userService) Create(ctx context.Context, input *pb.CreateUserIn) (*model.User, error) {
-	userAdapter := s.userAdapterFactory.Create(ctx)
+func (s *UserService) Create(ctx context.Context, input *pb.CreateUserIn) (*model.User, error) {
 	userRepo := s.userRepoFactory.Create(ctx, s.db)
 
-	user, err := userRepo.Create(ctx, userAdapter.FromProto(input.User))
+	user, err := userRepo.Create(ctx, s.adapter.FromProto(input.User))
 	if err != nil {
 		return nil, fmt.Errorf("cannot create user: %w", err)
 	}
@@ -74,11 +72,10 @@ func (s *userService) Create(ctx context.Context, input *pb.CreateUserIn) (*mode
 }
 
 // Update --> @TODO --> return error when app is created with the same ID
-func (s *userService) Update(ctx context.Context, input *pb.UpdateUserIn) (*model.User, error) {
-	userAdapter := s.userAdapterFactory.Create(ctx)
+func (s *UserService) Update(ctx context.Context, input *pb.UpdateUserIn) (*model.User, error) {
 	userRepo := s.userRepoFactory.Create(ctx, s.db)
 
-	user, err := userRepo.Update(ctx, userAdapter.FromProto(input.User))
+	user, err := userRepo.Update(ctx, s.adapter.FromProto(input.User))
 	if err != nil {
 		return nil, fmt.Errorf("cannot update user: %w", err)
 	}
@@ -86,7 +83,7 @@ func (s *userService) Update(ctx context.Context, input *pb.UpdateUserIn) (*mode
 	return user, nil
 }
 
-func (s *userService) Delete(ctx context.Context, id int64) error {
+func (s *UserService) Delete(ctx context.Context, id int64) error {
 	userRepo := s.userRepoFactory.Create(ctx, s.db)
 
 	err := userRepo.Delete(ctx, id)

@@ -5,48 +5,47 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/db"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
 	"github.com/vizitiuRoman/hyf/internal/domain"
-	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
 	"github.com/vizitiuRoman/hyf/internal/domain/model"
-	"github.com/vizitiuRoman/hyf/internal/domain/repo"
+	"github.com/vizitiuRoman/hyf/internal/infra/adapter"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/pgclient"
 	"github.com/vizitiuRoman/hyf/pkg/gen/sqlboiler/hyfdb"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"go.uber.org/zap"
 )
 
-type userRepoFactory struct {
-	logger log.Logger
+type UserRepoFactory struct {
+	logger logger.Logger
 
-	userAdapterFactory adapter.UserAdapterFactory
+	adapter *adapter.UserAdapter
 }
 
-func NewUserRepoFactory(logger log.Logger, userAdapterFactory adapter.UserAdapterFactory) repo.UserRepoFactory {
-	return &userRepoFactory{
+func NewUserRepoFactory(logger logger.Logger, adapter *adapter.UserAdapter) *UserRepoFactory {
+	return &UserRepoFactory{
 		logger: logger,
 
-		userAdapterFactory: userAdapterFactory,
+		adapter: adapter,
 	}
 }
 
-func (f *userRepoFactory) Create(ctx context.Context, db db.DB) repo.UserRepo {
-	return &userRepo{
+func (f *UserRepoFactory) Create(ctx context.Context, db pgclient.DB) *UserRepo {
+	return &UserRepo{
 		logger: f.logger.WithComponent(ctx, "UserRepo"),
 		db:     db,
 
-		userAdapter: f.userAdapterFactory.Create(ctx),
+		adapter: f.adapter,
 	}
 }
 
-type userRepo struct {
-	logger log.Logger
-	db     db.DB
+type UserRepo struct {
+	logger logger.Logger
+	db     pgclient.DB
 
-	userAdapter adapter.UserAdapter
+	adapter *adapter.UserAdapter
 }
 
-func (r *userRepo) Find(ctx context.Context, id int64) (*model.User, error) {
+func (r *UserRepo) Find(ctx context.Context, id int64) (*model.User, error) {
 	ent, err := hyfdb.Users(hyfdb.UserWhere.ID.EQ(id)).One(ctx, r.db)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
@@ -58,11 +57,11 @@ func (r *userRepo) Find(ctx context.Context, id int64) (*model.User, error) {
 		return nil, err
 
 	default:
-		return r.userAdapter.FromEntity(ent), nil
+		return r.adapter.FromEntity(ent), nil
 	}
 }
 
-func (r *userRepo) FindByEmail(ctx context.Context, email string) (*model.User, error) {
+func (r *UserRepo) FindByEmail(ctx context.Context, email string) (*model.User, error) {
 	ent, err := hyfdb.Users(hyfdb.UserWhere.Email.EQ(email)).One(ctx, r.db)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
@@ -74,22 +73,22 @@ func (r *userRepo) FindByEmail(ctx context.Context, email string) (*model.User, 
 		return nil, err
 
 	default:
-		return r.userAdapter.FromEntity(ent), nil
+		return r.adapter.FromEntity(ent), nil
 	}
 }
 
-func (r *userRepo) FindAll(ctx context.Context) ([]*model.User, error) {
+func (r *UserRepo) FindAll(ctx context.Context) ([]*model.User, error) {
 	ent, err := hyfdb.Users().All(ctx, r.db)
 	if err != nil {
 		r.logger.WithMethod(ctx, "FindAll").Error("execute query", zap.Error(err))
 		return nil, err
 	}
 
-	return r.userAdapter.FromEntities(ent), nil
+	return r.adapter.FromEntities(ent), nil
 }
 
-func (r *userRepo) Create(ctx context.Context, input *model.User) (*model.User, error) {
-	ent, err := r.userAdapter.ToEntity(input)
+func (r *UserRepo) Create(ctx context.Context, input *model.User) (*model.User, error) {
+	ent, err := r.adapter.ToEntity(input)
 	if err != nil {
 		r.logger.WithMethod(ctx, "Create").Error("failed to adapt entity", zap.Error(err))
 		return nil, err
@@ -101,11 +100,11 @@ func (r *userRepo) Create(ctx context.Context, input *model.User) (*model.User, 
 		return nil, err
 	}
 
-	return r.userAdapter.FromEntity(ent), nil
+	return r.adapter.FromEntity(ent), nil
 }
 
-func (r *userRepo) Update(ctx context.Context, input *model.User) (*model.User, error) {
-	ent, err := r.userAdapter.ToEntity(input)
+func (r *UserRepo) Update(ctx context.Context, input *model.User) (*model.User, error) {
+	ent, err := r.adapter.ToEntity(input)
 	if err != nil {
 		r.logger.WithMethod(ctx, "Update").Error("failed to adapt entity", zap.Error(err))
 		return nil, err
@@ -121,10 +120,10 @@ func (r *userRepo) Update(ctx context.Context, input *model.User) (*model.User, 
 		return nil, domain.ErrNotFound
 	}
 
-	return r.userAdapter.FromEntity(ent), nil
+	return r.adapter.FromEntity(ent), nil
 }
 
-func (r *userRepo) Delete(ctx context.Context, id int64) error {
+func (r *UserRepo) Delete(ctx context.Context, id int64) error {
 	rowsAff, err := hyfdb.Users(hyfdb.UserWhere.ID.EQ(id)).DeleteAll(ctx, r.db)
 	if err != nil {
 		r.logger.WithMethod(ctx, "Delete").Error("failed to delete user", zap.Error(err))

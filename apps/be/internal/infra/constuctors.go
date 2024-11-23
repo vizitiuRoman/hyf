@@ -14,9 +14,9 @@ var Constructors = fx.Provide(
 	repo.NewTodoRepoFactory,
 	repo.NewUserRepoFactory,
 
-	adapter.NewAuthTokenAdapterFactory,
-	adapter.NewTodoAdapterFactory,
-	adapter.NewUserAdapterFactory,
+	adapter.NewAuthTokenAdapter,
+	adapter.NewTodoAdapter,
+	adapter.NewUserAdapter,
 
 	service.NewAuthService,
 	service.NewTodoService,

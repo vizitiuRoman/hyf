@@ -7,14 +7,14 @@ import (
 	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/helper/util"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 	"go.uber.org/zap"
 )
 
 type universalClient struct {
 	ctx    context.Context
 	cfg    *UniversalConfig
-	logger log.Logger
+	logger logger.Logger
 	cln    redis.UniversalClient
 }
 
@@ -28,7 +28,7 @@ func (c *universalClient) Init() error {
 	return nil
 }
 
-func NewUniversalClient(ctx context.Context, cfg *UniversalConfig, logger log.Logger) (Cache, error) {
+func NewUniversalClient(ctx context.Context, cfg *UniversalConfig, logger logger.Logger) (Cache, error) {
 	client := &universalClient{
 		ctx:    ctx,
 		cfg:    cfg,

@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	gateway "github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -29,7 +29,7 @@ type grpcServer struct {
 
 	ctx            context.Context
 	cfg            *Config
-	logger         log.Logger
+	logger         logger.Logger
 	grpcServer     *grpc.Server
 	gatewayServer  *http.Server
 	mux            *gateway.ServeMux
@@ -39,7 +39,7 @@ type grpcServer struct {
 
 func NewGRPC(
 	ctx context.Context,
-	logger log.Logger,
+	logger logger.Logger,
 	cfg *Config,
 	serveMux *gateway.ServeMux,
 	middlewares []Middleware,

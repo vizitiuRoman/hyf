@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/suite"
 	"github.com/vizitiuRoman/hyf/__tests__/helper"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
 	"github.com/vizitiuRoman/hyf/internal/domain/model"
 	hyfv1 "github.com/vizitiuRoman/hyf/pkg/adapter/hyf/v1"
 	pb "github.com/vizitiuRoman/hyf/pkg/gen/hyf/v1"
@@ -29,7 +28,7 @@ type AuthAPISuite struct {
 	authSVCClient pb.AuthSVCClient
 
 	Cfg    *helper.Config
-	Logger log.Logger
+	Logger logger.Logger
 
 	// suite
 	mockUser *model.User

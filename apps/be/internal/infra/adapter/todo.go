@@ -4,35 +4,24 @@ import (
 	"context"
 	"time"
 
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
-	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
 	"github.com/vizitiuRoman/hyf/internal/domain/model"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 	pb "github.com/vizitiuRoman/hyf/pkg/gen/hyf/v1"
 	"github.com/vizitiuRoman/hyf/pkg/gen/sqlboiler/hyfdb"
 	"github.com/volatiletech/null/v8"
 )
 
-type todoAdapterFactory struct {
-	logger log.Logger
+type TodoAdapter struct {
+	logger logger.Logger
 }
 
-func NewTodoAdapterFactory(logger log.Logger) adapter.TodoAdapterFactory {
-	return &todoAdapterFactory{
-		logger: logger,
+func NewTodoAdapter(ctx context.Context, logger logger.Logger) *TodoAdapter {
+	return &TodoAdapter{
+		logger: logger.WithComponent(ctx, "TodoAdapter"),
 	}
 }
 
-func (f *todoAdapterFactory) Create(ctx context.Context) adapter.TodoAdapter {
-	return &todoAdapter{
-		logger: f.logger.WithComponent(ctx, "TodoAdapter"),
-	}
-}
-
-type todoAdapter struct {
-	logger log.Logger
-}
-
-func (a *todoAdapter) FromProto(todo *pb.Todo) *model.Todo {
+func (a *TodoAdapter) FromProto(todo *pb.Todo) *model.Todo {
 	return &model.Todo{
 		ID:          todo.Id,
 		Title:       todo.Title,
@@ -40,7 +29,7 @@ func (a *todoAdapter) FromProto(todo *pb.Todo) *model.Todo {
 	}
 }
 
-func (a *todoAdapter) ToProto(todo *model.Todo) *pb.Todo {
+func (a *TodoAdapter) ToProto(todo *model.Todo) *pb.Todo {
 	return &pb.Todo{
 		Id:          todo.ID,
 		Title:       todo.Title,
@@ -48,7 +37,7 @@ func (a *todoAdapter) ToProto(todo *model.Todo) *pb.Todo {
 	}
 }
 
-func (a *todoAdapter) ToProtos(todos []*model.Todo) []*pb.Todo {
+func (a *TodoAdapter) ToProtos(todos []*model.Todo) []*pb.Todo {
 	output := make([]*pb.Todo, 0, len(todos))
 
 	for _, todo := range todos {
@@ -58,7 +47,7 @@ func (a *todoAdapter) ToProtos(todos []*model.Todo) []*pb.Todo {
 	return output
 }
 
-func (a *todoAdapter) ToEntity(todo *model.Todo) *hyfdb.Todo {
+func (a *TodoAdapter) ToEntity(todo *model.Todo) *hyfdb.Todo {
 	return &hyfdb.Todo{
 		ID:               todo.ID,
 		Title:            todo.Title,
@@ -72,7 +61,7 @@ func (a *todoAdapter) ToEntity(todo *model.Todo) *hyfdb.Todo {
 	}
 }
 
-func (a *todoAdapter) ToEntities(todos []*model.Todo) hyfdb.TodoSlice {
+func (a *TodoAdapter) ToEntities(todos []*model.Todo) hyfdb.TodoSlice {
 	entities := make(hyfdb.TodoSlice, 0, len(todos))
 
 	for _, todo := range todos {
@@ -82,7 +71,7 @@ func (a *todoAdapter) ToEntities(todos []*model.Todo) hyfdb.TodoSlice {
 	return entities
 }
 
-func (a *todoAdapter) FromEntity(todo *hyfdb.Todo) *model.Todo {
+func (a *TodoAdapter) FromEntity(todo *hyfdb.Todo) *model.Todo {
 	return &model.Todo{
 		ID:          todo.ID,
 		Title:       todo.Title,
@@ -90,7 +79,7 @@ func (a *todoAdapter) FromEntity(todo *hyfdb.Todo) *model.Todo {
 	}
 }
 
-func (a *todoAdapter) FromEntities(todos hyfdb.TodoSlice) []*model.Todo {
+func (a *TodoAdapter) FromEntities(todos hyfdb.TodoSlice) []*model.Todo {
 	todosModel := make([]*model.Todo, 0, len(todos))
 
 	for _, todo := range todos {

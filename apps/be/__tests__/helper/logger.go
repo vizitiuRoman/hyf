@@ -5,17 +5,16 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/suite"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 )
 
 func WithLogger() TestingSuiteOption {
 	return func(t *testing.T, suite suite.TestingSuite) {
-		logger := log.MustDefaultConsoleLogger("debug")
 		subSuiteType := reflect.ValueOf(suite).Elem()
 		for i := 0; i < subSuiteType.NumField(); i++ {
 			field := subSuiteType.Field(i)
-			if field.Kind() == reflect.Interface && field.Type().Implements(reflect.TypeOf((*log.Logger)(nil)).Elem()) {
-				field.Set(reflect.ValueOf(logger))
+			if field.Kind() == reflect.Interface && field.Type().Implements(reflect.TypeOf((*logger.Logger)(nil)).Elem()) {
+				//field.Set(reflect.ValueOf())
 				return
 			}
 		}

@@ -4,10 +4,10 @@ import (
 	"context"
 
 	grpc2 "github.com/vizitiuRoman/hyf/internal/application/grpc"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/server/grpc"
-	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
-	"github.com/vizitiuRoman/hyf/internal/domain/service"
+	"github.com/vizitiuRoman/hyf/internal/infra/adapter"
+	"github.com/vizitiuRoman/hyf/internal/infra/service"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 	"go.uber.org/fx"
 )
 
@@ -25,15 +25,15 @@ func NewFxGRPC(in FxGrpcIn) []*grpc.ServerDescriptor {
 	return in.Descriptors
 }
 
-func NewFxTodoSVC(ctx context.Context, logger log.Logger, todoAdapterFactory adapter.TodoAdapterFactory, todoService service.TodoService) DescriptorOut {
+func NewFxTodoSVC(ctx context.Context, logger logger.Logger, adapter *adapter.TodoAdapter, todoService service.TodoService) DescriptorOut {
 	return DescriptorOut{
-		Option: grpc2.NewTodoSVCServerDescriptor(ctx, logger, todoAdapterFactory, todoService),
+		Option: grpc2.NewTodoSVCServerDescriptor(ctx, logger, adapter, todoService),
 	}
 }
 
-func NewFxAuthSVC(ctx context.Context, logger log.Logger, authTokenAdapterFactory adapter.AuthTokenAdapterFactory, authService service.AuthService) DescriptorOut {
+func NewFxAuthSVC(ctx context.Context, logger logger.Logger, adapter *adapter.AuthTokenAdapter, authService service.AuthService) DescriptorOut {
 	return DescriptorOut{
-		Option: grpc2.NewAuthSVCServerDescriptor(ctx, logger, authTokenAdapterFactory, authService),
+		Option: grpc2.NewAuthSVCServerDescriptor(ctx, logger, adapter, authService),
 	}
 }
 

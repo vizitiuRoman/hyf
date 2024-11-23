@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 	todov1 "github.com/vizitiuRoman/hyf/pkg/gen/hyf/v1"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -16,7 +16,7 @@ import (
 
 func NewTodoSVCClient(
 	ctx context.Context,
-	logger log.Logger,
+	logger logger.Logger,
 	cfg *Config,
 	dialOptions []grpc.DialOption,
 	unaryInterceptors []grpc.UnaryClientInterceptor,
@@ -38,7 +38,7 @@ func NewTodoSVCClient(
 
 	f := &todoSVCFactory{
 		ctx:    ctx,
-		logger: logger.Named("app-svc-client"),
+		logger: logger.WithComponent(ctx, "app-svc-client"),
 		opts:   defaultDialOptions,
 		cfg:    cfg,
 		conns:  make(map[string]*grpc.ClientConn),
@@ -51,7 +51,7 @@ type todoSVCFactory struct {
 	ctx context.Context
 	mu  sync.Mutex
 
-	logger log.Logger
+	logger logger.Logger
 	opts   []grpc.DialOption
 	cfg    *Config
 	conns  map[string]*grpc.ClientConn

@@ -6,56 +6,56 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/cache/redis"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/db"
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/log"
-	"github.com/vizitiuRoman/hyf/internal/domain/adapter"
 	"github.com/vizitiuRoman/hyf/internal/domain/model"
-	"github.com/vizitiuRoman/hyf/internal/domain/repo"
-	"github.com/vizitiuRoman/hyf/internal/domain/service"
+	"github.com/vizitiuRoman/hyf/internal/infra/adapter"
+	"github.com/vizitiuRoman/hyf/internal/infra/repo"
+	"github.com/vizitiuRoman/hyf/internal/infra/repo/cache"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/pgclient"
 	pb "github.com/vizitiuRoman/hyf/pkg/gen/hyf/v1"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type authService struct {
-	logger log.Logger
+type AuthService struct {
+	logger logger.Logger
 
-	db  db.DB
+	db  pgclient.DB
 	rdb redis.Cache
 
-	authAdapterFactory adapter.AuthTokenAdapterFactory
+	adapter *adapter.AuthTokenAdapter
 
-	authTokenRepoFactory repo.AuthTokenRepoFactory
-	userRepoFactory      repo.UserRepoFactory
+	authTokenRepoFactory *cache.AuthTokenRepoFactory
+	userRepoFactory      *repo.UserRepoFactory
 }
 
 func NewAuthService(
 	ctx context.Context,
 
-	logger log.Logger,
+	logger logger.Logger,
 
-	db db.DB,
+	db pgclient.DB,
 	rdb redis.Cache,
 
-	authAdapterFactory adapter.AuthTokenAdapterFactory,
+	adapter *adapter.AuthTokenAdapter,
 
-	authTokenRepoFactory repo.AuthTokenRepoFactory,
-	userRepoFactory repo.UserRepoFactory,
-) service.AuthService {
-	return &authService{
+	authTokenRepoFactory *cache.AuthTokenRepoFactory,
+	userRepoFactory *repo.UserRepoFactory,
+) *AuthService {
+	return &AuthService{
 		logger: logger.WithComponent(ctx, "auth_service"),
 
 		db:  db,
 		rdb: rdb,
 
-		authAdapterFactory: authAdapterFactory,
+		adapter: adapter,
 
 		authTokenRepoFactory: authTokenRepoFactory,
 		userRepoFactory:      userRepoFactory,
 	}
 }
 
-func (s *authService) Login(ctx context.Context, in *pb.LoginIn) (*model.AuthToken, *model.AuthToken, error) {
+func (s *AuthService) Login(ctx context.Context, in *pb.LoginIn) (*model.AuthToken, *model.AuthToken, error) {
 	logger := s.logger.WithMethod(ctx, "Login").With(
 		zap.String("email", in.Email),
 	)
@@ -72,8 +72,7 @@ func (s *authService) Login(ctx context.Context, in *pb.LoginIn) (*model.AuthTok
 		return nil, nil, err
 	}
 
-	authAdapter := s.authAdapterFactory.Create(ctx)
-	authToken, refreshToken, err := authAdapter.FromUserID(ctx, user.ID)
+	authToken, refreshToken, err := s.adapter.FromUserID(ctx, user.ID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -94,16 +93,14 @@ func (s *authService) Login(ctx context.Context, in *pb.LoginIn) (*model.AuthTok
 	return authToken, refreshToken, nil
 }
 
-func (s *authService) Register(ctx context.Context, in *pb.RegisterIn) (*model.AuthToken, *model.AuthToken, error) {
-	authAdapter := s.authAdapterFactory.Create(ctx)
-
+func (s *AuthService) Register(ctx context.Context, in *pb.RegisterIn) (*model.AuthToken, *model.AuthToken, error) {
 	userRepo := s.userRepoFactory.Create(ctx, s.db)
-	user, err := userRepo.Create(ctx, authAdapter.FromRegisterProtoToUser(in))
+	user, err := userRepo.Create(ctx, s.adapter.FromRegisterProtoToUser(in))
 	if err != nil {
 		return nil, nil, err
 	}
 
-	authToken, refreshToken, err := authAdapter.FromUserID(ctx, user.ID)
+	authToken, refreshToken, err := s.adapter.FromUserID(ctx, user.ID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -124,13 +121,12 @@ func (s *authService) Register(ctx context.Context, in *pb.RegisterIn) (*model.A
 	return authToken, refreshToken, nil
 }
 
-func (s *authService) Refresh(ctx context.Context, in *pb.RefreshIn) (*model.AuthToken, *model.AuthToken, error) {
+func (s *AuthService) Refresh(ctx context.Context, in *pb.RefreshIn) (*model.AuthToken, *model.AuthToken, error) {
 	logger := s.logger.WithMethod(ctx, "Refresh").With(zap.String("refresh_token", in.RefreshToken))
 
 	authTokenRepo := s.authTokenRepoFactory.Create(ctx, s.rdb)
-	authAdapter := s.authAdapterFactory.Create(ctx)
 
-	uuidClaim, userID, err := authAdapter.ClaimsFromRefreshJWT(ctx, in.RefreshToken)
+	uuidClaim, userID, err := s.adapter.ClaimsFromRefreshJWT(ctx, in.RefreshToken)
 	if err != nil {
 		logger.Error("cannot claim from refresh jwt", zap.Error(err))
 		return nil, nil, err
@@ -142,7 +138,7 @@ func (s *authService) Refresh(ctx context.Context, in *pb.RefreshIn) (*model.Aut
 		return nil, nil, err
 	}
 
-	authToken, refreshToken, err := authAdapter.FromUserID(ctx, userID)
+	authToken, refreshToken, err := s.adapter.FromUserID(ctx, userID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -162,19 +158,18 @@ func (s *authService) Refresh(ctx context.Context, in *pb.RefreshIn) (*model.Aut
 	return authToken, refreshToken, nil
 }
 
-func (s *authService) Logout(ctx context.Context, in *pb.LogoutIn) error {
+func (s *AuthService) Logout(ctx context.Context, in *pb.LogoutIn) error {
 	logger := s.logger.WithMethod(ctx, "Logout").With(zap.String("refresh_token", in.RefreshToken), zap.String("access_token", in.Token))
 
 	authTokenRepo := s.authTokenRepoFactory.Create(ctx, s.rdb)
-	authTokenAdapter := s.authAdapterFactory.Create(ctx)
 
-	accessUUID, _, err := authTokenAdapter.ClaimsFromJWT(ctx, in.Token)
+	accessUUID, _, err := s.adapter.ClaimsFromJWT(ctx, in.Token)
 	if err != nil {
 		logger.Error("cannot claim from jwt", zap.Error(err))
 		return err
 	}
 
-	refreshUUID, _, err := authTokenAdapter.ClaimsFromRefreshJWT(ctx, in.RefreshToken)
+	refreshUUID, _, err := s.adapter.ClaimsFromRefreshJWT(ctx, in.RefreshToken)
 	if err != nil {
 		logger.Error("cannot claim from refresh jwt", zap.Error(err))
 		return err
