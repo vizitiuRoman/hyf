@@ -8,6 +8,7 @@ import (
 	"github.com/vizitiuRoman/hyf/__tests__/helper"
 	"github.com/vizitiuRoman/hyf/internal/domain/model"
 	hyfv1 "github.com/vizitiuRoman/hyf/pkg/adapter/hyf/v1"
+	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
 	pb "github.com/vizitiuRoman/hyf/pkg/gen/hyf/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"

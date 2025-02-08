@@ -39,7 +39,7 @@ tasks:
   buf-mod-update:
     desc: generates artifacts from *.proto files.
     cmds:
-      - buf mod update
+      - buf dep update ./api/proto
     generates:
       - "pkg/gen/hyf"
 
