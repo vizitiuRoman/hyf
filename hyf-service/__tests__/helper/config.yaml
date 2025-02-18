@@ -1,0 +1,7 @@
+grpc:
+  host: ${GRPC_HOST}
+  port: ${GRPC_PORT}
+
+user:
+  email: roma@gmail.com
+  password: owqmeqwoemqwe

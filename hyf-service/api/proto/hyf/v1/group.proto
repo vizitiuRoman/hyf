@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = ".;proto";
+
+service GroupSVC {
+  rpc GetGroups(GetGroupsIn) returns (GetGroupsOut) {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "GroupSVC";
+      summary: "Return the groups";
+      description: "Return the groups";
+    };
+    option (google.api.http) = {get: "/v1/groups"};
+  }
+
+  rpc GetGroup(GetGroupIn) returns (GetGroupOut) {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "GroupSVC";
+      summary: "Returns a group";
+      description: "Returns a group by id.";
+    };
+    option (google.api.http) = {get: "/v1/groups/*"};
+  }
+
+  rpc CreateGroup(CreateGroupIn) returns (CreateGroupOut) {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "GroupSVC";
+      summary: "Create a new group";
+      description: "Create a new group. Returns created group.";
+    };
+    option (google.api.http) = {
+      post: "/v1/groups"
+      body: "*"
+    };
+  }
+
+  rpc UpdateGroup(UpdateGroupIn) returns (UpdateGroupOut) {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "GroupSVC";
+      summary: "Update the group";
+      description: "Update the group. Returns an updated group.";
+    };
+    option (google.api.http) = {
+      put: "/v1/groups"
+      body: "*"
+    };
+  }
+
+  rpc DeleteGroup(DeleteGroupIn) returns (google.protobuf.Empty) {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "GroupSVC";
+      summary: "Delete the group";
+      description: "Delete the group.";
+    };
+    option (google.api.http) = {delete: "/v1/groups/*"};
+  }
+}
+
+message Group {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+// ----------------- GetGroups -----------------
+
+message GetGroupsIn {}
+
+message GetGroupsOut {
+  repeated Group groups = 1;
+}
+
+// ----------------- GetGroup -----------------
+
+message GetGroupIn {
+  int64 id = 1;
+}
+
+message GetGroupOut {
+  Group group = 1;
+}
+
+// ----------------- CreateGroup -----------------
+
+message CreateGroupIn {
+  Group group = 1;
+}
+
+message CreateGroupOut {
+  Group group = 1;
+}
+
+// ----------------- UpdateGroup -----------------
+
+message UpdateGroupIn {
+  Group group = 1;
+}
+
+message UpdateGroupOut {
+  Group group = 1;
+}
+
+// ----------------- DeleteGroup -----------------
+
+message DeleteGroupIn {
+  int64 id = 1;
+}
+
+message DeleteGroupOut {}

@@ -1,0 +1,48 @@
+version: '3'
+
+dotenv: [ '.env' ]
+
+vars:
+
+tasks:
+  ent-gen:
+    desc: generate entities
+    cmds:
+      - sqlboiler psql --no-tests -d -o pkg/gen/sqlboiler/authdb -c var/config/.sqlboiler.toml
+
+  buf-format:
+    desc: format *.proto files.
+    cmds:
+      - buf format -w
+
+  buf-gen:
+    desc: generates artifacts from *.proto files.
+    cmds:
+      - buf generate
+    generates:
+      - "pkg/gen/auth"
+
+  buf-mod-update:
+    desc: generates artifacts from *.proto files.
+    cmds:
+      - buf dep update ./api/proto
+    generates:
+      - "pkg/gen/auth"
+
+  run-tests:
+    desc: run tests ( firstly authorize ).
+    cmds:
+      - go clean -testcache && go test -v ./__tests__/auth_api_test.go
+      - go clean -testcache && go test -v ./__tests__/todo_api_test.go
+    generates:
+      - "pkg/gen/auth"
+
+  lint:
+    desc: lints the project.
+    cmds:
+      - werf run --docker-options="-v `pwd`/:/app -w /app" --dev golangci-lint -- golangci-lint run -v
+
+  build:
+    desc: build werf image.
+    cmds:
+      - werf build --dev

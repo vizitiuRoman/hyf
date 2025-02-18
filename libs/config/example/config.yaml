@@ -1,0 +1,12 @@
+location: ${LOCATION:remote}
+
+db:
+  dsn: ${DB_DSN}
+  max_open_conns: 1
+  max_idle_conns: 12
+  conn_max_lifetime: 123   # value in seconds
+
+server:
+  grpc_port: ${SERVER_GRPC_PORT:18080}
+  http_port: 1234
+  use_tls: false

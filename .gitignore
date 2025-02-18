@@ -1,0 +1,8 @@
+/.idea/
+/.env
+/test/
+/build/
+
+./apps/.idea
+./apps/be/.idea
+./apps/app/.idea

@@ -1,0 +1,7 @@
+version: '3'
+
+tasks:
+  lint:
+    desc: lint the operator-api client.
+    cmds:
+      - werf run --docker-options="-v `pwd`/:/app -w /app" --dev golangci-lint -- golangci-lint run -v

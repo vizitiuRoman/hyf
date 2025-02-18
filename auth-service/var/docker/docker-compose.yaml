@@ -1,0 +1,29 @@
+version: '3.8'
+
+volumes:
+  auth-service_vol:
+
+services:
+  auth-service_redis:
+    image: redis:6.2.10
+    restart: always
+    ports:
+      - "63791:6379"
+
+  auth-service_db:
+    image: postgres:16.0
+    restart: always
+    volumes:
+      - auth-service_vol:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: auth-service
+      POSTGRES_HOST: localhost
+      POSTGRES_PASSWORD: auth-service
+      POSTGRES_DATABASE: auth-service
+    ports:
+      - "5002:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-U", "auth-service" ]
+      interval: 5s
+      timeout: 1s
+      retries: 2
