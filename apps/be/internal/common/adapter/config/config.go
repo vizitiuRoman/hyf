@@ -1,7 +1,6 @@
 package config
 
 import (
-	"github.com/vizitiuRoman/hyf/internal/common/adapter/cache"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/server/grpc"
 	"github.com/vizitiuRoman/hyf/pkg/adapter/config"
 	"github.com/vizitiuRoman/hyf/pkg/adapter/logger"
@@ -15,7 +14,6 @@ type Config struct {
 	Version   string `yaml:"version"`
 	BuildDate string `yaml:"build_date"`
 
-	Cache  *cache.Config    `yaml:"cache"`
 	Logger *logger.Config   `yaml:"logger"`
 	DB     *pgclient.Config `yaml:"db"`
 	Server *grpc.Config     `yaml:"server"`

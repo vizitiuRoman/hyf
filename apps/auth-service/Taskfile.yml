@@ -8,7 +8,7 @@ tasks:
   ent-gen:
     desc: generate entities
     cmds:
-      - sqlboiler psql --no-tests -d -o pkg/gen/sqlboiler/authdb -c ops/config/.sqlboiler.toml
+      - sqlboiler psql --no-tests -d -o pkg/gen/sqlboiler/authdb -c var/config/.sqlboiler.toml
 
   buf-format:
     desc: format *.proto files.

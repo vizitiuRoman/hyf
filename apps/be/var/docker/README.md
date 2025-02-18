@@ -1,7 +1,7 @@
 # Run application
 
 ```bash
-docker-compose -f ./ops/docker/docker-compose.yaml up -d
+docker-compose -f ./var/docker/docker-compose.yaml up -d
 ```
 
 # Customize your docker-compose environment
@@ -22,5 +22,5 @@ services:
 Development mode
 
 ```bash
-docker-compose -f ./ops/docker/docker-compose.yaml -f docker-compose.override.yaml up -d
+docker-compose -f ./var/docker/docker-compose.yaml -f docker-compose.override.yaml up -d
 ```

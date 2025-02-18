@@ -31,12 +31,6 @@ func NewFxTodoSVC(ctx context.Context, logger logger.Logger, adapter *adapter.To
 	}
 }
 
-func NewFxAuthSVC(ctx context.Context, logger logger.Logger, adapter *adapter.AuthTokenAdapter, authService service.AuthService) DescriptorOut {
-	return DescriptorOut{
-		Option: grpc2.NewAuthSVCServerDescriptor(ctx, logger, adapter, authService),
-	}
-}
-
 //
 //func NewFxUserSVC(ctx context.Context, logger log.Logger, db db.DB, todoAdapterFactory adapter.UserAdapterFactory, todoService service.UserService) DescriptorOut {
 //	return DescriptorOut{

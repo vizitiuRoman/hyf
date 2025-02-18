@@ -21,7 +21,7 @@ REDIS_PASSWORD=auth-service
 ## Run application
 
 ```bash
-$ docker-compose -f ./ops/docker/docker-compose.yaml
+$ docker-compose -f ./var/docker/docker-compose.yaml
 ```
 
 And if you see the following output then services is started ok.

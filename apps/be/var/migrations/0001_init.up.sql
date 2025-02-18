@@ -1,24 +1,12 @@
 begin;
 
--- Create user table
-create table "user"
-(
-    id            serial primary key,
-    name          varchar(255)        not null,
-    last_name     varchar(255)        not null,
-    email         varchar(255) unique not null,
-    password      varchar(255)        not null,
-    created_at    timestamp without time zone not null,
-    last_login_at timestamp without time zone
-);
-
 -- Create group table
 create table "group"
 (
-    id              serial primary key,
-    group_name      varchar(255)             not null,
-    creator_user_id int references "user" (id),
-    created_at      timestamp with time zone not null
+    id         serial primary key,
+    group_name varchar(255)             not null,
+    user_id    int references "user" (id),
+    created_at timestamp with time zone not null
 );
 
 -- Create todo table
@@ -26,7 +14,7 @@ create table todo
 (
     id                serial primary key,
     group_id          int references "group" (id),
-    creator_user_id   int references "user" (id),
+    user_id           int                      not null,
     title             text                     not null,
     description       text                     not null,
     location          varchar(255),

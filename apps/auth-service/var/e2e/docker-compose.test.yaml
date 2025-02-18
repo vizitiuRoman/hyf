@@ -27,7 +27,7 @@ services:
       - "18080"
     build:
       context: ./../../
-      dockerfile: ./ops/docker/Dockerfile
+      dockerfile: ../docker/Dockerfile
       target: application-dev
     volumes:
       - ./../../:/app:rw

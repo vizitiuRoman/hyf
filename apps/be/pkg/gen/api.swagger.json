@@ -6,9 +6,6 @@
   },
   "tags": [
     {
-      "name": "AuthSVC"
-    },
-    {
       "name": "GroupSVC"
     },
     {
@@ -33,210 +30,6 @@
     "application/json"
   ],
   "paths": {
-    "/v1/auth/login": {
-      "post": {
-        "summary": "Login into account",
-        "operationId": "AuthSVC_Login",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/AuthOut"
-            }
-          },
-          "403": {
-            "description": "Returned when the user does not have permission to access the resource.",
-            "schema": {}
-          },
-          "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "type": "string",
-              "format": "string"
-            }
-          },
-          "500": {
-            "description": "Server error",
-            "schema": {
-              "type": "string",
-              "format": "string"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/LoginIn"
-            }
-          }
-        ],
-        "tags": [
-          "AuthSVC"
-        ]
-      }
-    },
-    "/v1/auth/logout": {
-      "post": {
-        "summary": "Logout",
-        "operationId": "AuthSVC_Logout",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/LogoutOut"
-            }
-          },
-          "403": {
-            "description": "Returned when the user does not have permission to access the resource.",
-            "schema": {}
-          },
-          "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "type": "string",
-              "format": "string"
-            }
-          },
-          "500": {
-            "description": "Server error",
-            "schema": {
-              "type": "string",
-              "format": "string"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/LogoutIn"
-            }
-          }
-        ],
-        "tags": [
-          "AuthSVC"
-        ]
-      }
-    },
-    "/v1/auth/refresh": {
-      "post": {
-        "summary": "Refresh the access token",
-        "operationId": "AuthSVC_Refresh",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/AuthOut"
-            }
-          },
-          "403": {
-            "description": "Returned when the user does not have permission to access the resource.",
-            "schema": {}
-          },
-          "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "type": "string",
-              "format": "string"
-            }
-          },
-          "500": {
-            "description": "Server error",
-            "schema": {
-              "type": "string",
-              "format": "string"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RefreshIn"
-            }
-          }
-        ],
-        "tags": [
-          "AuthSVC"
-        ]
-      }
-    },
-    "/v1/auth/register": {
-      "post": {
-        "summary": "Register new account",
-        "operationId": "AuthSVC_Register",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/AuthOut"
-            }
-          },
-          "403": {
-            "description": "Returned when the user does not have permission to access the resource.",
-            "schema": {}
-          },
-          "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "type": "string",
-              "format": "string"
-            }
-          },
-          "500": {
-            "description": "Server error",
-            "schema": {
-              "type": "string",
-              "format": "string"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RegisterIn"
-            }
-          }
-        ],
-        "tags": [
-          "AuthSVC"
-        ]
-      }
-    },
     "/v1/groups": {
       "get": {
         "summary": "Return the groups",
@@ -1161,21 +954,6 @@
     }
   },
   "definitions": {
-    "AuthOut": {
-      "type": "object",
-      "properties": {
-        "expiresIn": {
-          "type": "string",
-          "format": "int64"
-        },
-        "token": {
-          "type": "string"
-        },
-        "refreshToken": {
-          "type": "string"
-        }
-      }
-    },
     "CreateGroupIn": {
       "type": "object",
       "properties": {
@@ -1319,31 +1097,6 @@
         }
       }
     },
-    "LoginIn": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        }
-      }
-    },
-    "LogoutIn": {
-      "type": "object",
-      "properties": {
-        "token": {
-          "type": "string"
-        },
-        "refreshToken": {
-          "type": "string"
-        }
-      }
-    },
-    "LogoutOut": {
-      "type": "object"
-    },
     "Rating": {
       "type": "object",
       "properties": {
@@ -1355,31 +1108,6 @@
           "type": "string"
         },
         "description": {
-          "type": "string"
-        }
-      }
-    },
-    "RefreshIn": {
-      "type": "object",
-      "properties": {
-        "refreshToken": {
-          "type": "string"
-        }
-      }
-    },
-    "RegisterIn": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "lastName": {
           "type": "string"
         }
       }

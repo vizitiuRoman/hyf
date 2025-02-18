@@ -29,7 +29,7 @@ shell:
     - cd /app
     - CGO_ENABLED=0 go build -ldflags="-w -s" -o bin/{{ $projectName }} cmd/main.go
 git:
-  - add: /
+  - add: /apps/auth-service
     to: /app
     stageDependencies:
       install:

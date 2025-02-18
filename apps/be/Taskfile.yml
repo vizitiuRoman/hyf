@@ -11,7 +11,7 @@ tasks:
     aliases: [ run ]
     desc: runs (app, database, migration) locally with dev credentials.
     cmds:
-      - docker-compose -f docker-compose.override.yaml -f ../ops/docker/docker-compose.yaml up -d
+      - docker-compose -f docker-compose.override.yaml -f ../var/docker/docker-compose.yaml up -d
     env:
       LOCATION: remote
       LOGGER_LEVEL: debug
