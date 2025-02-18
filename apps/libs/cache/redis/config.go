@@ -14,7 +14,7 @@ type Config struct {
 	// ClientName will execute the `CLIENT SETNAME ClientName` command for each conn.
 	ClientName string `yaml:"client_name"`
 
-	// Database to be selected after connecting to the server.
+	// Database to hyf-service selected after connecting to the server.
 	// Only single-node and failover clients.
 	DB int `yaml:"db"`
 

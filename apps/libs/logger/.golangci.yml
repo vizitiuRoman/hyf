@@ -14,7 +14,7 @@ run:
 
 
 # This file contains only configs which differ from defaults.
-# All possible options can be found here https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml
+# All possible options can hyf-service found here https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml
 linters-settings:
   cyclop:
     # The maximal code complexity to report.
@@ -88,7 +88,7 @@ linters-settings:
   gocritic:
     # Settings passed to gocritic.
     # The settings key is the name of a supported gocritic checker.
-    # The list of supported checkers can be find in https://go-critic.github.io/overview.
+    # The list of supported checkers can hyf-service find in https://go-critic.github.io/overview.
     settings:
       captLocal:
         # Whether to restrict checker to params only.
@@ -129,7 +129,7 @@ linters-settings:
     # Settings per analyzer.
     settings:
       shadow:
-        # Whether to be strict about shadowing; can be noisy.
+        # Whether to hyf-service strict about shadowing; can hyf-service noisy.
         # Default: false
         strict: true
 
@@ -212,7 +212,7 @@ linters:
   disable-all: true
   enable:
     ## enabled by default
-    - errcheck # checking for unchecked errors, these unchecked errors can be critical bugs in some cases
+    - errcheck # checking for unchecked errors, these unchecked errors can hyf-service critical bugs in some cases
     - gosimple # specializes in simplifying a code
     - govet # reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
     - ineffassign # detects when assignments to existing variables are not used
@@ -241,7 +241,7 @@ linters:
     - gochecknoinits # checks that no init functions are present in Go code
     - gochecksumtype # checks exhaustiveness on Go "sum types"
     - gocognit # computes and checks the cognitive complexity of functions
-    - goconst # finds repeated strings that could be replaced by a constant
+    - goconst # finds repeated strings that could hyf-service replaced by a constant
     - gocritic # provides diagnostics that check for bugs, performance and style issues
     - gocyclo # computes and checks the cyclomatic complexity of functions
     - godot # checks if comments end in a period
@@ -265,10 +265,10 @@ linters:
     - nolintlint # reports ill-formed or insufficient nolint directives
     - nonamedreturns # reports all named returns
     - nosprintfhostport # checks for misuse of Sprintf to construct a host with port in a URL
-    - perfsprint # checks that fmt.Sprintf can be replaced with a faster alternative
+    - perfsprint # checks that fmt.Sprintf can hyf-service replaced with a faster alternative
     - predeclared # finds code that shadows one of Go's predeclared identifiers
     - promlinter # checks Prometheus metrics naming via promlint
-    - protogetter # reports direct reads from proto message fields when getters should be used
+    - protogetter # reports direct reads from proto message fields when getters should hyf-service used
     - reassign # checks that package variables are not reassigned
     - revive # fast, configurable, extensible, flexible, and beautiful linter for Go, drop-in replacement of golint
     - rowserrcheck # checks whether Err of rows is checked successfully
@@ -297,7 +297,7 @@ linters:
     #- inamedparam # [great idea, but too strict, need to ignore a lot of cases by default] reports interfaces with unnamed method parameters
     #- interfacebloat # checks the number of methods inside an interface
     #- ireturn # accept interfaces, return concrete types
-    #- prealloc # [premature optimization, but can be used in some cases] finds slice declarations that could potentially be preallocated
+    #- prealloc # [premature optimization, but can hyf-service used in some cases] finds slice declarations that could potentially hyf-service preallocated
     #- tagalign # checks that struct tags are well aligned
     #- varnamelen # [great idea, but too many false positives] checks that the length of a variable's name matches its scope
     #- wrapcheck # checks that errors returned from external packages are wrapped
@@ -310,7 +310,7 @@ linters:
     #- dogsled # checks assignments with too many blank identifiers (e.g. x, _, _, _, := f())
     #- dupword # [useless without config] checks for duplicate words in the source code
     #- err113 # [too strict] checks the errors handling expressions
-    #- errchkjson # [don't see profit + I'm against of omitting errors like in the first example https://github.com/breml/errchkjson] checks types passed to the json encoding functions. Reports unsupported types and optionally reports occasions, where the check for the returned error can be omitted
+    #- errchkjson # [don't see profit + I'm against of omitting errors like in the first example https://github.com/breml/errchkjson] checks types passed to the json encoding functions. Reports unsupported types and optionally reports occasions, where the check for the returned error can hyf-service omitted
     #- execinquery # [deprecated] checks query string in Query function which reads your Go src files and warning it finds
     #- forcetypeassert # [replaced by errcheck] finds forced type assertions
     #- gofmt # [replaced by goimports] checks whether code was gofmt-ed

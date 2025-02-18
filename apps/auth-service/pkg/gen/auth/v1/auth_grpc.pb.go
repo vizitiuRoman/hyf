@@ -94,10 +94,10 @@ type AuthSVCServer interface {
 	mustEmbedUnimplementedAuthSVCServer()
 }
 
-// UnimplementedAuthSVCServer must be embedded to have
+// UnimplementedAuthSVCServer must hyf-service embedded to have
 // forward compatible implementations.
 //
-// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// NOTE: this should hyf-service embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
 type UnimplementedAuthSVCServer struct{}
 
@@ -116,7 +116,7 @@ func (UnimplementedAuthSVCServer) Logout(context.Context, *LogoutIn) (*LogoutOut
 func (UnimplementedAuthSVCServer) mustEmbedUnimplementedAuthSVCServer() {}
 func (UnimplementedAuthSVCServer) testEmbeddedByValue()                 {}
 
-// UnsafeAuthSVCServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeAuthSVCServer may hyf-service embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to AuthSVCServer will
 // result in compilation errors.
 type UnsafeAuthSVCServer interface {
@@ -208,7 +208,7 @@ func _AuthSVC_Logout_Handler(srv interface{}, ctx context.Context, dec func(inte
 
 // AuthSVC_ServiceDesc is the grpc.ServiceDesc for AuthSVC service.
 // It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
+// and not to hyf-service introspected or modified (even as a copy)
 var AuthSVC_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "AuthSVC",
 	HandlerType: (*AuthSVCServer)(nil),

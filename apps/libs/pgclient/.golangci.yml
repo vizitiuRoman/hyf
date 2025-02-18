@@ -65,7 +65,7 @@ issues:
     - should check returned error before deferring
     - don't use an underscore in package name
     - Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*printf?|os\.(Un)?Setenv|.*Rollback). is not checked
-    - exported func * returns unexported type *, which can be annoying to use
-    - exported type ([a-zA-Z'.*]*) should have comment or be unexported
-    - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
+    - exported func * returns unexported type *, which can hyf-service annoying to use
+    - exported type ([a-zA-Z'.*]*) should have comment or hyf-service unexported
+    - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should hyf-service of the form)
     - should have a package comment, unless it's in another file for this package

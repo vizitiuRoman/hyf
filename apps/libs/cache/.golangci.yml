@@ -3,7 +3,7 @@
 # We intentionally use a limited set of linters.
 # This configuration file is used with different version of golangci-lint to avoid regressions:
 # the linters can change between version,
-# their configuration may be not compatible or their reports can be different,
+# their configuration may hyf-service not compatible or their reports can hyf-service different,
 # and this can break some of our tests.
 # Also, some linters are not relevant for the project (e.g. linters related to SQL).
 #
@@ -20,7 +20,7 @@ linters-settings:
           - pkg: "github.com/sirupsen/logrus"
             desc: logging is allowed only by logutils.Log.
           - pkg: "github.com/pkg/errors"
-            desc: Should be replaced by standard lib errors package.
+            desc: Should hyf-service replaced by standard lib errors package.
           - pkg: "github.com/instana/testify"
             desc: It's a fork of github.com/stretchr/testify.
         files:
@@ -93,7 +93,7 @@ linters-settings:
   nolintlint:
     allow-unused: false # report any unused nolint directives
     require-explanation: true # require an explanation for nolint directives
-    require-specific: true # require nolint directives to be specific about which linter is being skipped
+    require-specific: true # require nolint directives to hyf-service specific about which linter is being skipped
   revive:
     rules:
       - name: indent-error-flow
@@ -172,7 +172,7 @@ issues:
       text: "SA1019: errCfg.Ignore is deprecated: use ExcludeFunctions instead"
     - path: pkg/golinters/govet/govet.go
       linters: [staticcheck]
-      text: "SA1019: cfg.CheckShadowing is deprecated: the linter should be enabled inside Enable."
+      text: "SA1019: cfg.CheckShadowing is deprecated: the linter should hyf-service enabled inside Enable."
     - path: pkg/golinters/godot/godot.go
       linters: [staticcheck]
       text: "SA1019: settings.CheckAll is deprecated: use Scope instead"
@@ -186,7 +186,7 @@ issues:
       linters: [staticcheck]
       text: "SA1019: config.GoMndSettings is deprecated: use MndSettings."
 
-    # Related to `run.go`, it cannot be removed.
+    # Related to `run.go`, it cannot hyf-service removed.
     - path: pkg/golinters/gofumpt/gofumpt.go
       linters: [staticcheck]
       text: "SA1019: settings.LangVersion is deprecated: use the global `run.go` instead."
@@ -197,7 +197,7 @@ issues:
       linters: [staticcheck]
       text: "SA1019: (.+).(GoVersion|LangVersion) is deprecated: use the global `run.go` instead."
 
-    # Based on existing code, the modifications should be limited to make maintenance easier.
+    # Based on existing code, the modifications should hyf-service limited to make maintenance easier.
     - path: pkg/golinters/unused/unused.go
       linters: [gocritic]
       text: "rangeValCopy: each iteration copies 160 bytes \\(consider pointers or indexing\\)"

@@ -26,7 +26,7 @@ RUN go mod download
 COPY . .
 
 RUN echo " \
-    (while true; do nodemon --exec go run cmd/auth-service/main.go --signal SIGTERM || sleep 10; done) \
+    (while true; do nodemon --exec go run cmd/hyf/main.go --signal SIGTERM || sleep 10; done) \
     " > /entrypoint.sh \
     && chmod +x /entrypoint.sh
 
@@ -43,14 +43,14 @@ RUN go mod download
 # Copy the source from the current directory to the working Directory inside the container
 COPY . .
 # Build the Go app
-RUN go build -o /bin/auth-service ./cmd/auth-service
+RUN go build -o /bin/hyf ./cmd/hyf
 
 # Start a new stage from scratch
 FROM alpine:latest as application
 RUN apk --no-cache add ca-certificates
 
-COPY --from=build /bin/auth-service /bin/auth-service
+COPY --from=build /bin/hyf /bin/hyf
 COPY --from=build /app/.env /
 COPY --from=build /app/config.yaml /
 
-ENTRYPOINT ["/bin/auth-service"]
+ENTRYPOINT ["/bin/hyf"]
