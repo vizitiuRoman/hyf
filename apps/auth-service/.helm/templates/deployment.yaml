@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: auth-service
+          image: holod8/auth-service
           envFrom:
             - configMapRef:
                 name: auth-service-config
