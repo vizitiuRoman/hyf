@@ -1,4 +1,4 @@
-{{- $projectName := "auth-service" }}
+{{- $projectName := "auth-svc" }}
 ---
 
 project: {{ $projectName }}
