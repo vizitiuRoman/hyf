@@ -37,6 +37,8 @@ git:
         - "go.sum"
       beforeSetup:
         - "**/*.go"
+  - add: /apps/libs
+    to: /libs
 mount:
   - from: build_dir
     to: /go/pkg/mod
