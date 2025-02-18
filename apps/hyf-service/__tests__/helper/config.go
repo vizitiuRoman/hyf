@@ -10,8 +10,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/suite"
 	"github.com/vizitiuRoman/hyf/internal/common/adapter/config"
-
-	uberconfig "go.uber.org/config"
 )
 
 type Config struct {
@@ -26,29 +24,13 @@ type Config struct {
 	}
 }
 
-const defaultConfigYaml = "./helper/config.yaml"
-
-var cfg *Config
-
-func newConfig() (*Config, error) {
-	provider, err := config.NewProviderByOptions(uberconfig.File(defaultConfigYaml))
-	if err != nil {
-		return nil, err
-	}
-	if err = provider.Populate(&cfg); err != nil {
-		panic(err)
-	}
-
-	return cfg, nil
-}
-
 func WithConfig() TestingSuiteOption {
 	return func(t *testing.T, suite suite.TestingSuite) {
 		root := getRootDir()
 
 		os.Setenv("ENV_FILE", path.Join(root, "./helper/.env"))
 		os.Setenv("CONFIG_FILE", path.Join(root, "config.yaml"))
-		conf, err := newConfig()
+		conf, err := config.NewConfig()
 		if err != nil {
 			dir, errWd := os.Getwd()
 			if errWd == nil {
