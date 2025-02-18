@@ -17,7 +17,7 @@ type authSVC struct {
 
 	adapter *adapter.AuthAdapter
 
-	authService service.AuthService
+	authService *service.AuthService
 }
 
 func NewAuthSVCServerDescriptor(
@@ -26,7 +26,7 @@ func NewAuthSVCServerDescriptor(
 
 	adapter *adapter.AuthAdapter,
 
-	authService service.AuthService,
+	authService *service.AuthService,
 ) *grpc.ServerDescriptor {
 	server := &authSVC{
 		ctx:    ctx,

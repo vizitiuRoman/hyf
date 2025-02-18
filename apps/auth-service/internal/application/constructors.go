@@ -25,7 +25,7 @@ func NewFxGRPC(in FxGrpcIn) []*grpc.ServerDescriptor {
 	return in.Descriptors
 }
 
-func NewFxAuthSVC(ctx context.Context, logger logger.Logger, adapter *adapter.AuthAdapter, authService service.AuthService) DescriptorOut {
+func NewFxAuthSVC(ctx context.Context, logger logger.Logger, adapter *adapter.AuthAdapter, authService *service.AuthService) DescriptorOut {
 	return DescriptorOut{
 		Option: grpc2.NewAuthSVCServerDescriptor(ctx, logger, adapter, authService),
 	}
