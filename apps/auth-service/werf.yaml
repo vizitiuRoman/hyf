@@ -48,6 +48,9 @@ image: {{ $projectName }}
 from: alpine:latest
 docker:
   CMD: {{ $projectName }}
+git:
+  - add: /config.yaml
+    to: /config.yaml
 import:
   - image: binary
     add: /app/bin/{{ $projectName }}
