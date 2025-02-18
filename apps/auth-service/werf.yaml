@@ -49,7 +49,7 @@ from: alpine:latest
 docker:
   CMD: {{ $projectName }}
 git:
-  - add: /config.yaml
+  - add: /apps/auth-service/config.yaml
     to: /config.yaml
 import:
   - image: binary
