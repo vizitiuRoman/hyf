@@ -25,7 +25,7 @@ func NewFxGRPC(in FxGrpcIn) []*grpc.ServerDescriptor {
 	return in.Descriptors
 }
 
-func NewFxTodoSVC(ctx context.Context, logger logger.Logger, adapter *adapter.TodoAdapter, todoService service.TodoService) DescriptorOut {
+func NewFxTodoSVC(ctx context.Context, logger logger.Logger, adapter *adapter.TodoAdapter, todoService *service.TodoService) DescriptorOut {
 	return DescriptorOut{
 		Option: grpc2.NewTodoSVCServerDescriptor(ctx, logger, adapter, todoService),
 	}
