@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/vizitiuRoman/libs/pgclient"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
+	"github.com/vizit
 	"go.uber.org/zap"
 )
 

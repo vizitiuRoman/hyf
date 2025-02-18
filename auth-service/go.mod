@@ -2,13 +2,13 @@ module github.com/vizitiuRoman/auth-service
 
 go 1.23.4
 
-replace github.com/vizitiuRoman/libs/config => ../libs/config
+replace github.com/vizitiuRoman/libs/config => ./../libs/config
 
-replace github.com/vizitiuRoman/libs/cache => ../libs/cache
+replace github.com/vizitiuRoman/libs/cache => ./../libs/cache
 
-replace github.com/vizitiuRoman/libs/logger => ../libs/logger
+replace github.com/vizitiuRoman/libs/logger => ./../libs/logger
 
-replace github.com/vizitiuRoman/libs/pgclient => ../libs/pgclient
+replace github.com/vizitiuRoman/libs/pgclient => ./../libs/pgclient
 
 require (
 	github.com/Pallinder/go-randomdata v1.2.0

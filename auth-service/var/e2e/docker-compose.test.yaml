@@ -26,7 +26,7 @@ services:
       - "7777:8080"
       - "18080"
     build:
-      context: ./../../
+      context: ../..
       dockerfile: ../docker/Dockerfile
       target: application-dev
     volumes:
