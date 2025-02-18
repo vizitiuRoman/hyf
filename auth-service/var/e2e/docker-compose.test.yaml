@@ -1,0 +1,62 @@
+version: '3.8'
+
+volumes:
+  auth-service_test_vol:
+
+services:
+
+  auth-service_test_migrate:
+    restart: on-failure
+    image: migrate/migrate
+    volumes:
+      - ../../migrations:/migrations
+    command: [ "-path", "/migrations", "-database",  "postgres://auth-service:auth-service@auth-service_test_db:5432/auth-service?sslmode=disable", "up" ]
+    depends_on:
+      auth-service_test_db:
+        condition: service_healthy
+
+  auth-service_test_redis:
+    image: redis:6.2.10
+    restart: always
+    ports:
+      - "63792:6379"
+
+  auth-service_test_app:
+    ports:
+      - "7777:8080"
+      - "18080"
+    build:
+      context: ../..
+      dockerfile: ../docker/Dockerfile
+      target: application-dev
+    volumes:
+      - ./../../:/app:rw
+    environment:
+      LOCATION: remote
+      LOGGER_LEVEL: debug
+      LOGGER_ENCODING: console
+      LOGGER_LEVEL_ENCODER: lower
+      DB_DSN: postgres://auth-service:auth-service@auth-service_test_db:5432/auth-service?sslmode=disable
+      REDIS_SENTINEL_ADDRESSES: auth-service_test_redis:6379
+      REDIS_PASSWORD: auth-service
+
+    depends_on: [ auth-service_test_db, auth-service_test_redis ]
+
+  auth-service_test_db:
+    image: postgres:15.0
+    restart: always
+    volumes:
+      - auth-service_test_vol:/var/lib/postgresql/data
+      - ../../migrations:/migrations
+    environment:
+      POSTGRES_USER: auth-service
+      POSTGRES_HOST: localhost
+      POSTGRES_PASSWORD: auth-service
+      POSTGRES_DATABASE: auth-service
+    ports:
+      - "5010:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-U", "auth-service" ]
+      interval: 5s
+      timeout: 1s
+      retries: 2

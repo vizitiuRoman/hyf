@@ -1,0 +1,28 @@
+location: ${LOCATION}
+version: v1
+
+auth:
+  access_token_secret_key: porfmewif
+  refresh_token_secret_key: qwexqewxeqxwxqw
+
+logger:
+  encoding: ${LOGGER_ENCODING:json}
+  level: ${LOGGER_LEVEL:debug}
+  level_encoder: ${LOGGER_LEVEL_ENCODER:lower}
+
+db:
+  dsn: ${DB_DSN}
+
+server:
+  grpc_port: 18080
+  http_port: 8080
+  use_tls: false
+  max_send_message_length: 54760833024
+  max_receive_message_length: 54760833024
+
+cache:
+  addrs:
+    - ${REDIS_SENTINEL_ADDRESSES}
+  password: ${REDIS_PASSWORD}
+  default_ttl_in_sec: ${REDIS_DEFAULT_TTL:0}
+  scan_count: 1000

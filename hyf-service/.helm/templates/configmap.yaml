@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hyf-service-config
+data:
+  LOCATION: "remote"
+
+  # Logger config
+  LOGGER_LEVEL: "debug"
+  LOGGER_ENCODING: "console"
+  LOGGER_LEVEL_ENCODER: "lower"
+
+  # Database config
+  DB_DSN: "postgres://hyf:hyf@hyf-pg:5432/hyf?sslmode=disable"

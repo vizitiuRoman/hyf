@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  example:
+    desc: run logger example
+    cmds:
+      - cd ./example & go run ./cmd/main.go
+
+  lint:
+    desc: lint the operator-api client.
+    cmds:
+      - golangci-lint run
+
+  test:
+    desc: run tests.
+    cmds:
+      - go test -v ./...

@@ -1,0 +1,11 @@
+{{- $projectName := "exapi-libs-cache" }}
+---
+
+project: {{ $projectName }}
+configVersion: 1
+
+---
+
+image: golangci-lint
+from: golangci/golangci-lint:latest
+---
