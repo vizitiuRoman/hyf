@@ -1,0 +1,59 @@
+{{- $projectName := "hyf-svc" }}
+---
+
+project: {{ $projectName }}
+configVersion: 1
+deploy:
+  helmRelease: {{ $projectName }}
+---
+
+image: golangci-lint
+from: golangci/golangci-lint:latest
+---
+
+image: sqlboiler
+from: golang:alpine
+shell:
+  install:
+    - go install github.com/volatiletech/sqlboiler/v4@latest
+    - go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
+---
+
+image: binary
+from: golang:1.23.4-alpine
+shell:
+  install:
+    - cd /app
+    - go mod download
+  beforeSetup:
+    - cd /app
+    - CGO_ENABLED=0 go build -ldflags="-w -s" -o bin/{{ $projectName }} cmd/main.go
+git:
+  - add: /apps/hyf-service
+    to: /app
+    stageDependencies:
+      install:
+        - "go.mod"
+        - "go.sum"
+      beforeSetup:
+        - "**/*.go"
+  - add: /apps/libs
+    to: /libs
+mount:
+  - from: build_dir
+    to: /go/pkg/mod
+---
+
+image: {{ $projectName }}
+from: alpine:latest
+docker:
+  CMD: {{ $projectName }}
+git:
+  - add: /apps/hyf-service/config.yaml
+    to: /config.yaml
+import:
+  - image: binary
+    add: /app/bin/{{ $projectName }}
+    to: /usr/local/bin/{{ $projectName }}
+    after: setup
+---

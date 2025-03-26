@@ -1,0 +1,9 @@
+/.idea/
+/.env
+/build/
+/buf.lock
+/ssh/
+/.werf_secret_key
+/.helm/Chart.lock
+/.helm/charts
+/secret-values.yaml
